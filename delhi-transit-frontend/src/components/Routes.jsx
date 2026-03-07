@@ -81,23 +81,23 @@ export default function Routes({ selectedRoute, onSelectRoute, onRoutesLoaded })
           {/* Mode Toggle */}
           <button
             onClick={() => setMode("nearby")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              mode === "nearby"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
+            className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ${mode === "nearby"
+                ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20"
+                : "bg-gray-800 text-gray-400 hover:bg-gray-700 border border-white/5"
+              }`}
           >
+            <i className="fas fa-location-arrow text-[10px]"></i>
             Nearby
           </button>
 
           <button
             onClick={() => setMode("all")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              mode === "all"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
+            className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ${mode === "all"
+                ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20"
+                : "bg-gray-800 text-gray-400 hover:bg-gray-700 border border-white/5"
+              }`}
           >
+            <i className="fas fa-globe-asia text-[10px]"></i>
             All Routes
           </button>
 
@@ -121,11 +121,10 @@ export default function Routes({ selectedRoute, onSelectRoute, onRoutesLoaded })
           return (
             <div
               key={route._id}
-              className={`bg-[#020617] border border-gray-800 rounded-xl p-6 shadow-lg transition-all ${
-                isSelected
+              className={`bg-[#020617] border border-gray-800 rounded-xl p-6 shadow-lg transition-all ${isSelected
                   ? "ring-2 ring-blue-500 shadow-[0_0_30px_rgba(59,130,246,0.6)]"
                   : ""
-              }`}
+                }`}
             >
               <div className="flex justify-between items-start mb-4">
                 <div>
@@ -170,13 +169,13 @@ export default function Routes({ selectedRoute, onSelectRoute, onRoutesLoaded })
 
               <button
                 onClick={() => onSelectRoute(route)}
-                className={`w-full py-3 rounded-lg font-semibold transition ${
-                  isSelected
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                }`}
+                className={`w-full py-4 rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 ${isSelected
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20"
+                    : "bg-[#0f172a] text-gray-400 hover:bg-gray-800 border border-white/5 cursor-pointer"
+                  }`}
               >
-                {isSelected ? "✓ Selected" : "Select Route"}
+                <i className={`fas ${isSelected ? 'fa-check-circle' : 'fa-plus-circle'}`}></i>
+                {isSelected ? "ACTIVE" : "SELECT VECTOR"}
               </button>
             </div>
           );

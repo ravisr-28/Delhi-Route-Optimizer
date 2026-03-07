@@ -1,7 +1,6 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const GitHubStrategy = require('passport-github2').Strategy;
-const MicrosoftStrategy = require('passport-microsoft').Strategy;
 const User = require('../models/User');
 
 // ─── Google OAuth ────────────────────────────────────────
@@ -37,22 +36,6 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
     }));
 }
 
-// ─── Microsoft OAuth ─────────────────────────────────────
-if (process.env.MICROSOFT_CLIENT_ID && process.env.MICROSOFT_CLIENT_SECRET) {
-    passport.use(new MicrosoftStrategy({
-        clientID: process.env.MICROSOFT_CLIENT_ID,
-        clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
-        callbackURL: `${process.env.SERVER_URL || 'http://localhost:5000'}/api/oauth/microsoft/callback`,
-        scope: ['user.read'],
-    }, async (accessToken, refreshToken, profile, done) => {
-        try {
-            const user = await findOrCreateOAuthUser(profile, 'microsoft');
-            done(null, user);
-        } catch (err) {
-            done(err, null);
-        }
-    }));
-}
 
 // ─── Helper: Find or create user from OAuth profile ──────
 async function findOrCreateOAuthUser(profile, provider) {
@@ -78,5 +61,18 @@ async function findOrCreateOAuthUser(profile, provider) {
 
     return user;
 }
+
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+    try {
+        const user = await User.findById(id);
+        done(null, user);
+    } catch (err) {
+        done(err, null);
+    }
+});
 
 module.exports = passport;

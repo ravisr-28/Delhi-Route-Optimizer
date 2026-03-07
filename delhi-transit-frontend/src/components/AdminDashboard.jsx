@@ -26,26 +26,26 @@ function getMetroPeriod(hour) {
 }
 
 const PERIOD_INFO = {
-  closed:        { label: 'Metro Closed',   emoji: '', color: '#ef4444', desc: 'Service unavailable (11 PM – 6 AM)' },
-  early_morning: { label: 'Early Morning',  emoji: '', color: '#f97316', desc: 'Light crowd, stations opening' },
-  morning_rush:  { label: 'Morning Rush',   emoji: '', color: '#ef4444', desc: 'Peak crowding (8–10 AM)' },
-  late_morning:  { label: 'Late Morning',   emoji: '', color: '#eab308', desc: 'Moderate crowd' },
-  afternoon:     { label: 'Afternoon',      emoji: '', color: '#22c55e', desc: 'Comfortable off-peak' },
-  post_lunch:    { label: 'Post Lunch',     emoji: '', color: '#84cc16', desc: 'Gradually building' },
-  evening_rush:  { label: 'Evening Rush',   emoji: '', color: '#ef4444', desc: 'Peak crowding (5–8 PM)' },
-  late_evening:  { label: 'Late Evening',   emoji: '', color: '#8b5cf6', desc: 'Winding down' },
+  closed: { label: 'Operational Standby', icon: 'fas fa-moon', color: '#ef4444', desc: 'Service unavailable (11 PM – 6 AM)' },
+  early_morning: { label: 'Morning Protocol', icon: 'fas fa-sun', color: '#f97316', desc: 'Light crowd, stations opening' },
+  morning_rush: { label: 'AM Peak Flow', icon: 'fas fa-bolt', color: '#ef4444', desc: 'Peak crowding (8–10 AM)' },
+  late_morning: { label: 'Mid-Day Operations', icon: 'fas fa-cloud-sun', color: '#eab308', desc: 'Moderate crowd' },
+  afternoon: { label: 'Afternoon Ops', icon: 'fas fa-sun', color: '#22c55e', desc: 'Comfortable off-peak' },
+  post_lunch: { label: 'Transition Phase', icon: 'fas fa-cloud-sun', color: '#84cc16', desc: 'Gradually building' },
+  evening_rush: { label: 'PM Peak Flow', icon: 'fas fa-bolt', color: '#ef4444', desc: 'Peak crowding (5–8 PM)' },
+  late_evening: { label: 'Evening Protocol', icon: 'fas fa-moon', color: '#8b5cf6', desc: 'Winding down' },
 };
 
 // Category weights per period
 const CAT_WEIGHTS = {
-  closed:        [0, 0, 5, 15, 5, 0, 5, 5, 65],
+  closed: [0, 0, 5, 15, 5, 0, 5, 5, 65],
   early_morning: [5, 10, 20, 10, 15, 5, 15, 5, 0],
-  morning_rush:  [35, 20, 3, 5, 3, 10, 3, 10, 0],
-  late_morning:  [10, 10, 20, 10, 10, 15, 10, 10, 0],
-  afternoon:     [8, 8, 25, 10, 10, 20, 10, 5, 0],
-  post_lunch:    [10, 10, 15, 10, 10, 15, 15, 10, 0],
-  evening_rush:  [30, 25, 3, 8, 3, 10, 3, 12, 0],
-  late_evening:  [5, 10, 15, 20, 10, 5, 15, 10, 0],
+  morning_rush: [35, 20, 3, 5, 3, 10, 3, 10, 0],
+  late_morning: [10, 10, 20, 10, 10, 15, 10, 10, 0],
+  afternoon: [8, 8, 25, 10, 10, 20, 10, 5, 0],
+  post_lunch: [10, 10, 15, 10, 10, 15, 15, 10, 0],
+  evening_rush: [30, 25, 3, 8, 3, 10, 3, 12, 0],
+  late_evening: [5, 10, 15, 20, 10, 5, 15, 10, 0],
 };
 
 // Time-specific messages
@@ -226,82 +226,109 @@ export default function AdminDashboard({ onClose, user, onLogout }) {
   const dateStr = now.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] text-gray-100">
+    <div className="min-h-screen bg-[#020617] text-gray-100 font-sans selection:bg-blue-500/30 selection:text-white">
       {/* Top bar */}
-      <div className="bg-[#0f1728] border-b border-white/10 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-lg font-bold">📊</div>
+      <div className="bg-[#0f172a]/60 backdrop-blur-2xl border-b border-white/5 px-8 py-5 flex items-center justify-between sticky top-0 z-50 shadow-2xl shadow-black/20">
+        <div className="flex items-center gap-5">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-xl shadow-xl shadow-blue-500/20 relative group overflow-hidden">
+            <div className="absolute inset-0 bg-white/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <i className="fas fa-chart-line relative"></i>
+          </div>
           <div>
-            <h1 className="text-lg font-bold text-white">Admin Dashboard</h1>
-            <p className="text-[11px] text-gray-400">Delhi Transit — Crowdsourced Feedback Analytics</p>
+            <h1 className="text-xl font-bold text-white tracking-normal font-display">Operations Intel</h1>
+            <p className="text-[10px] font-bold text-gray-500 tracking-[0.2em] mt-0.5">Delhi Transit • Live Crowdsourced Analytics</p>
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <p className="text-xs text-gray-400">{dateStr}</p>
-            <p className="text-sm font-semibold text-white">🕐 {timeStr}</p>
+        <div className="flex items-center gap-6">
+          <div className="hidden lg:block text-right">
+            <p className="text-[10px] font-bold text-gray-500 tracking-widest leading-none mb-1">{dateStr}</p>
+            <p className="text-sm font-bold text-blue-400 tracking-wide">{timeStr}</p>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            <span className="text-[11px] text-green-400">Live</span>
+          <div className="h-10 w-px bg-white/5 mx-2 hidden lg:block"></div>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20">
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+            <span className="text-[10px] font-bold text-blue-400 tracking-widest">Live Syncing</span>
           </div>
-          <button onClick={onClose} className="px-4 py-2 text-sm bg-white/10 hover:bg-white/20 rounded-lg transition-colors cursor-pointer">← Back to App</button>
+          <button onClick={onClose} className="px-5 py-2.5 text-xs font-bold bg-[#020617] border border-gray-800 hover:border-blue-500/50 hover:text-white rounded-xl transition-all cursor-pointer shadow-lg active:scale-95">
+            <i className="fas fa-chevron-left mr-2"></i> Exit Terminal
+          </button>
           {user && (
-            <div className="flex items-center gap-3 pl-3 border-l border-white/10">
+            <div className="flex items-center gap-4 pl-6 border-l border-white/5">
               <div className="text-right">
-                <p className="text-xs text-white font-medium">{user.name || user.username}</p>
-                <p className="text-[10px] text-gray-400">{user.role === 'super_admin' ? 'Super Admin' : 'Moderator'}</p>
+                <p className="text-xs text-white font-bold tracking-wide">{user.name || user.username}</p>
+                <p className="text-[9px] font-bold text-gray-500 tracking-widest">{user.role === 'super_admin' ? 'System Overseer' : 'Traffic Mod'}</p>
               </div>
-              <button onClick={onLogout} className="px-3 py-1.5 text-xs bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded-lg transition-colors cursor-pointer">Logout</button>
+              <button onClick={onLogout} className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all cursor-pointer border border-red-500/20">
+                <i className="fas fa-power-off"></i>
+              </button>
             </div>
           )}
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 py-6 space-y-6">
+      <div className="max-w-[1440px] mx-auto px-8 py-8 space-y-8">
 
         {/* Metro Status Banner */}
-        <div className="rounded-xl p-4 border flex items-center justify-between" style={{ borderColor: pInfo.color + '50', backgroundColor: pInfo.color + '10' }}>
-          <div className="flex items-center gap-4">
-            <span className="text-3xl">{pInfo.emoji}</span>
+        <div className="rounded-[2rem] p-6 border-2 flex items-center justify-between relative overflow-hidden group shadow-2xl"
+          style={{ borderColor: pInfo.color + '20', backgroundColor: pInfo.color + '05' }}>
+
+          {/* Animated glow */}
+          <div className="absolute -left-20 -top-20 w-60 h-60 rounded-full blur-[100px] opacity-20 transition-opacity group-hover:opacity-30"
+            style={{ backgroundColor: pInfo.color }}></div>
+
+          <div className="flex items-center gap-6 relative">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl shadow-xl shadow-black/40 relative overflow-hidden"
+              style={{ backgroundColor: pInfo.color + '20', border: `1px solid ${pInfo.color}30` }}>
+              <div className="absolute inset-0 bg-white/5 blur-lg"></div>
+              <i className={`${pInfo.icon || 'fas fa-clock'} text-lg`}></i>
+            </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-lg font-bold text-white">{pInfo.label}</span>
-                <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: pInfo.color + '30', color: pInfo.color }}>
-                  {metroOpen ? '🟢 Metro Running' : '🔴 Metro Closed'}
+              <div className="flex items-center gap-3">
+                <span className="text-2xl font-bold text-white tracking-normal font-display">{pInfo.label} Status</span>
+                <span className="text-[10px] font-bold px-3 py-1 rounded-full tracking-widest shadow-inner"
+                  style={{ backgroundColor: pInfo.color + '20', color: pInfo.color, border: `1px solid ${pInfo.color}30` }}>
+                  {metroOpen ? 'Network Operational' : 'Network Hibernating'}
                 </span>
               </div>
-              <p className="text-sm text-gray-400 mt-0.5">{pInfo.desc}</p>
+              <p className="text-sm text-gray-400 mt-2 font-medium tracking-wide">{pInfo.desc}</p>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-xs text-gray-400">Feedback is weighted to current period</p>
-            <p className="text-xs mt-1" style={{ color: pInfo.color }}>
-              {period === 'closed' ? '📊 Showing: Metro-closed reports, safety concerns' :
-               period === 'morning_rush' || period === 'evening_rush' ? '📊 Showing: Overcrowding & delay dominant' :
-               period === 'early_morning' ? '📊 Showing: Cleanliness & staff feedback dominant' :
-               '📊 Showing: Balanced feedback mix'}
+          <div className="text-right relative">
+            <p className="text-[10px] font-bold text-gray-500 tracking-[0.2em] mb-2 px-3 py-1 bg-black/30 rounded-full w-fit ml-auto">Intelligence Feed Active</p>
+            <p className="text-sm font-bold tracking-wide" style={{ color: pInfo.color }}>
+              {period === 'closed' ? '🚨 CRITICAL: Service suspended, monitoring infrastructure integrity.' :
+                period === 'morning_rush' || period === 'evening_rush' ? '⚠️ ADVISORY: Peak load detected. Prioritizing overcrowding telemetry.' :
+                  period === 'early_morning' ? '✅ NORMAL: High maintenance standards reported. Stations clean.' :
+                    '✅ BALANCED: Nominal commuter flow across all sectors.'}
             </p>
           </div>
         </div>
 
         {/* Live Feed Banner */}
         {liveFeed.length > 0 && (
-          <div className="bg-[#0f1728] border border-white/10 rounded-xl p-4">
-            <h3 className="text-sm font-bold text-white mb-2 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              Live Feed — New reports arriving in real-time
+          <div className="bg-[#0f172a]/30 backdrop-blur-sm border border-white/5 rounded-[1.5rem] p-6 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-5">
+              <i className="fas fa-satellite fa-5x text-blue-500"></i>
+            </div>
+            <h3 className="text-xs font-bold text-gray-300 tracking-[0.25em] mb-4 flex items-center gap-3">
+              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+              Real-time Inflow • <span className="text-blue-500">Sub-minute Latency</span>
             </h3>
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               {liveFeed.map((f, i) => (
-                <div key={f.id} className={`flex items-center gap-3 text-xs px-3 py-2 rounded-lg ${i === 0 ? 'bg-white/[0.06] ring-1 ring-white/10' : 'bg-white/[0.02]'}`}>
-                  <span className="text-gray-500 w-16">{f.timestamp.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}</span>
-                  <span className="text-white font-medium w-32">{f.station}</span>
-                  <span className="px-1.5 py-0.5 rounded text-[10px]" style={{ backgroundColor: LINE_COLORS[f.line] + '25', color: LINE_COLORS[f.line] }}>{f.line.replace(' Line', '')}</span>
-                  <span className="text-gray-300 flex-1">{f.message}</span>
-                  <span className="px-1.5 py-0.5 rounded text-[10px]" style={{ backgroundColor: SC[f.sentiment] + '20', color: SC[f.sentiment] }}>
-                    {f.sentiment === 'Positive' ? '😊' : f.sentiment === 'Neutral' ? '😐' : '😠'} {f.sentiment}
-                  </span>
+                <div key={f.id} className={`flex items-center gap-4 text-xs font-medium px-4 py-3 rounded-xl transition-all hover:bg-white/5 ${i === 0 ? 'bg-blue-600/10 ring-1 ring-blue-500/20' : 'bg-black/20'}`}>
+                  <span className="text-gray-500 font-mono w-20 tracking-normal">{f.timestamp.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}</span>
+                  <span className="text-white font-bold w-40 tracking-wide">{f.station}</span>
+                  <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold tracking-widest border border-white/5 shadow-sm" style={{ backgroundColor: LINE_COLORS[f.line] + '30', color: LINE_COLORS[f.line], borderColor: LINE_COLORS[f.line] + '40' }}>{f.line.replace(' Line', '')}</span>
+                  <span className="text-gray-400 flex-1">"{f.message}"</span>
+                  <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-black/40 border border-white/5">
+                    <span className="text-lg leading-none">
+                      {f.sentiment === 'Positive' ? <i className="fas fa-smile text-emerald-500"></i> :
+                        f.sentiment === 'Neutral' ? <i className="fas fa-meh text-amber-500"></i> :
+                          <i className="fas fa-frown text-red-500"></i>}
+                    </span>
+                    <span className="text-[10px] font-bold tracking-widest" style={{ color: SC[f.sentiment] }}>{f.sentiment}</span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -309,85 +336,134 @@ export default function AdminDashboard({ onClose, user, onLogout }) {
         )}
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { label: 'Total Reports', value: totalReports, icon: '#', color: 'from-blue-600 to-blue-800', sub: `Last ${timeRange}` },
-            { label: 'Negative Sentiment', value: `${negPct}%`, icon: '!', color: 'from-red-600 to-red-800', sub: negPct > 50 ? 'Critical' : negPct > 30 ? 'Needs Attention' : 'Acceptable' },
-            { label: 'Avg Severity', value: avgSev, icon: '!', color: 'from-orange-600 to-orange-800', sub: 'Out of 5' },
-            { label: 'Top Issue', value: topIssue, icon: '*', color: 'from-purple-600 to-purple-800', sub: `${categoryData[0]?.value || 0} reports` },
-          ].map((kpi, i) => (
-            <div key={i} className={`bg-gradient-to-br ${kpi.color} rounded-xl p-4 border border-white/10 shadow-lg`}>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-2xl">{kpi.icon}</span>
-                <span className="text-[10px] text-white/60 bg-white/10 px-2 py-0.5 rounded-full">{kpi.sub}</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-6 rounded-[1.5rem] hover:border-blue-500/30 transition-all shadow-xl group">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-500 text-xl border border-blue-500/20 shadow-lg shadow-blue-500/5 group-hover:scale-110 transition-transform">
+                <i className="fas fa-file-alt"></i>
               </div>
-              <p className="text-2xl font-bold text-white">{kpi.value}</p>
-              <p className="text-xs text-white/70 mt-1">{kpi.label}</p>
+              <span className="text-[10px] font-bold text-emerald-500 tracking-widest bg-emerald-500/10 px-2 py-1 rounded-lg">Total</span>
             </div>
-          ))}
-        </div>
+            <p className="text-3xl font-bold text-white tracking-normal font-display">{totalReports}</p>
+            <p className="text-[10px] font-bold text-gray-500 tracking-[0.2em] mt-1">Intelligence Logs</p>
+          </div>
 
-        {/* Filters */}
-        <div className="bg-[#0f1728] border border-white/10 rounded-xl p-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="text-xs text-gray-400 font-medium">Filters:</span>
-            <select value={timeRange} onChange={e => { setTimeRange(e.target.value); setCurrentPage(1); }} style={{ backgroundColor: '#1e293b', color: '#fff' }} className="border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
-              <option style={{ backgroundColor: '#1e293b', color: '#fff' }} value="24h">Last 24h</option>
-              <option style={{ backgroundColor: '#1e293b', color: '#fff' }} value="3d">Last 3 days</option>
-              <option style={{ backgroundColor: '#1e293b', color: '#fff' }} value="7d">Last 7 days</option>
-              <option style={{ backgroundColor: '#1e293b', color: '#fff' }} value="30d">Last 30 days</option>
-            </select>
-            <select value={filterCategory} onChange={e => { setFilterCategory(e.target.value); setCurrentPage(1); }} style={{ backgroundColor: '#1e293b', color: '#fff' }} className="border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
-              <option style={{ backgroundColor: '#1e293b', color: '#fff' }} value="All">All Categories</option>
-              {ALL_CATEGORIES.map(c => <option key={c} value={c} style={{ backgroundColor: '#1e293b', color: '#fff' }}>{c}</option>)}
-            </select>
-            <select value={filterLine} onChange={e => { setFilterLine(e.target.value); setCurrentPage(1); }} style={{ backgroundColor: '#1e293b', color: '#fff' }} className="border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
-              <option style={{ backgroundColor: '#1e293b', color: '#fff' }} value="All">All Lines</option>
-              {LINES.map(l => <option key={l} value={l} style={{ backgroundColor: '#1e293b', color: '#fff' }}>{l}</option>)}
-            </select>
-            <select value={filterSentiment} onChange={e => { setFilterSentiment(e.target.value); setCurrentPage(1); }} style={{ backgroundColor: '#1e293b', color: '#fff' }} className="border border-white/10 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
-              <option style={{ backgroundColor: '#1e293b', color: '#fff' }} value="All">All Sentiments</option>
-              {SENTIMENTS.map(s => <option key={s} value={s} style={{ backgroundColor: '#1e293b', color: '#fff' }}>{s}</option>)}
-            </select>
-            <input type="text" placeholder="Search feedback..." value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }} className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 w-48" />
-            <span className="ml-auto text-[11px] text-gray-500">{filteredFeedbacks.length} results</span>
+          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-6 rounded-[1.5rem] hover:border-blue-500/30 transition-all shadow-xl group">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-red-600/10 flex items-center justify-center text-red-500 text-xl border border-red-500/20 shadow-lg shadow-red-500/5 group-hover:scale-110 transition-transform">
+                <i className="fas fa-exclamation-circle"></i>
+              </div>
+              <span className="text-[10px] font-bold text-red-500 tracking-widest bg-red-500/10 px-2 py-1 rounded-lg">Critical</span>
+            </div>
+            <p className="text-3xl font-bold text-white tracking-normal font-display">{negPct}%</p>
+            <p className="text-[10px] font-bold text-gray-500 tracking-[0.2em] mt-1">Negativity Index</p>
+          </div>
+
+          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-6 rounded-[1.5rem] hover:border-blue-500/30 transition-all shadow-xl group">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-orange-600/10 flex items-center justify-center text-orange-500 text-xl border border-orange-500/20 shadow-lg shadow-orange-500/5 group-hover:scale-110 transition-transform">
+                <i className="fas fa-bolt"></i>
+              </div>
+              <span className="text-[10px] font-bold text-orange-400 tracking-widest bg-orange-500/10 px-2 py-1 rounded-lg">Weighted</span>
+            </div>
+            <p className="text-3xl font-bold text-white tracking-normal font-display">{avgSev}</p>
+            <p className="text-[10px] font-bold text-gray-500 tracking-[0.2em] mt-1">Avg Severity Level</p>
+          </div>
+
+          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-6 rounded-[1.5rem] hover:border-blue-500/30 transition-all shadow-xl group">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 rounded-2xl bg-purple-600/10 flex items-center justify-center text-purple-500 text-xl border border-purple-500/20 shadow-lg shadow-purple-500/5 group-hover:scale-110 transition-transform">
+                <i className="fas fa-star"></i>
+              </div>
+              <span className="text-[10px] font-bold text-purple-400 tracking-widest bg-purple-500/10 px-2 py-1 rounded-lg">Hotspot</span>
+            </div>
+            <p className="text-3xl font-bold text-white tracking-normal font-display">{topIssue}</p>
+            <p className="text-[10px] font-bold text-gray-500 tracking-[0.2em] mt-1">Primary Network Issue</p>
           </div>
         </div>
 
-        {/* Charts Row 1 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-[#0f1728] border border-white/10 rounded-xl p-4">
-            <h3 className="text-sm font-bold text-white mb-3">📊 Reports by Category</h3>
+        {/* Filters and Search */}
+        <div className="flex flex-wrap items-center justify-between gap-6 bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-6 rounded-2xl">
+          <div className="flex flex-wrap items-center gap-4">
+            <h4 className="text-[10px] font-bold text-gray-500 tracking-widest mr-2">Filter Matrix:</h4>
+
+            <select value={timeRange} onChange={e => { setTimeRange(e.target.value); setCurrentPage(1); }} className="bg-[#020617] border border-gray-800 rounded-xl px-4 py-2 text-[10px] font-bold tracking-widest text-white focus:outline-none focus:border-blue-500/50 transition-all cursor-pointer">
+              <option value="24h">Chronology: 24H</option>
+              <option value="3d">Chronology: 72H</option>
+              <option value="7d">Chronology: 168H</option>
+              <option value="30d">Chronology: 720H</option>
+            </select>
+
+            <select value={filterCategory} onChange={e => { setFilterCategory(e.target.value); setCurrentPage(1); }} className="bg-[#020617] border border-gray-800 rounded-xl px-4 py-2 text-[10px] font-bold tracking-widest text-white focus:outline-none focus:border-blue-500/50 transition-all cursor-pointer">
+              <option value="All">Scope: Universal</option>
+              {ALL_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+
+            <select value={filterLine} onChange={e => { setFilterLine(e.target.value); setCurrentPage(1); }} className="bg-[#020617] border border-gray-800 rounded-xl px-4 py-2 text-[10px] font-bold tracking-widest text-white focus:outline-none focus:border-blue-500/50 transition-all cursor-pointer">
+              <option value="All">Vector: All Lines</option>
+              {LINES.map(l => <option key={l} value={l}>{l}</option>)}
+            </select>
+
+            <select value={filterSentiment} onChange={e => { setFilterSentiment(e.target.value); setCurrentPage(1); }} className="bg-[#020617] border border-gray-800 rounded-xl px-4 py-2 text-[10px] font-bold tracking-widest text-white focus:outline-none focus:border-blue-500/50 transition-all cursor-pointer">
+              <option value="All">Polarity: All</option>
+              {SENTIMENTS.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+          <div className="relative group w-full md:w-80">
+            <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 group-focus-within:text-blue-500 transition-colors"></i>
+            <input
+              type="text"
+              placeholder="Search intelligence logs..."
+              value={searchQuery}
+              onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+              className="w-full pl-11 pr-4 py-3 bg-[#020617] border border-gray-800 rounded-2xl text-[10px] font-bold tracking-widest text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-all"
+            />
+          </div>
+        </div>
+
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-6 rounded-[1.5rem] shadow-xl relative overflow-hidden group">
+            <h3 className="text-[10px] font-bold text-white tracking-[0.25em] mb-6 flex items-center gap-3">
+              <i className="fas fa-list-ul text-blue-500"></i> Domain Analysis
+            </h3>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={categoryData} layout="vertical" margin={{ left: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
-                <XAxis type="number" tick={{ fill: '#6b7280', fontSize: 10 }} />
-                <YAxis dataKey="name" type="category" width={85} tick={{ fill: '#d1d5db', fontSize: 10 }} />
-                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: 8, fontSize: 12 }} />
-                <Bar dataKey="value" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" horizontal={false} />
+                <XAxis type="number" hide />
+                <YAxis dataKey="name" type="category" width={85} tick={{ fill: '#94a3b8', fontSize: 9, fontWeight: 'bold' }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', padding: '10px' }} itemStyle={{ color: '#fff', fontSize: '10px', fontWeight: 'bold' }} />
+                <Bar dataKey="value" fill="#3b82f6" radius={[0, 10, 10, 0]} barSize={12} />
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="bg-[#0f1728] border border-white/10 rounded-xl p-4">
-            <h3 className="text-sm font-bold text-white mb-3">😊 Sentiment Breakdown</h3>
+
+          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-6 rounded-[1.5rem] shadow-xl relative overflow-hidden group">
+            <h3 className="text-[10px] font-bold text-white tracking-[0.25em] mb-6 flex items-center gap-3">
+              <i className="fas fa-chart-pie text-indigo-500"></i> Satisfaction Mix
+            </h3>
             <ResponsiveContainer width="100%" height={220}>
               <PieChart>
-                <Pie data={sentimentData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={4} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                <Pie data={sentimentData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={6} dataKey="value" stroke="none">
                   {sentimentData.map(e => <Cell key={e.name} fill={SC[e.name]} />)}
                 </Pie>
-                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: 8, fontSize: 12 }} />
+                <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', padding: '10px' }} />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: '9px', fontWeight: 'bold', paddingTop: '10px' }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="bg-[#0f1728] border border-white/10 rounded-xl p-4">
-            <h3 className="text-sm font-bold text-white mb-3">Reports by Metro Line</h3>
+
+          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-6 rounded-[1.5rem] shadow-xl relative overflow-hidden group">
+            <h3 className="text-[10px] font-bold text-white tracking-[0.25em] mb-6 flex items-center gap-3">
+              <i className="fas fa-network-wired text-cyan-500"></i> Vector Distribution
+            </h3>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={lineData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
-                <XAxis dataKey="name" tick={{ fill: '#d1d5db', fontSize: 9 }} />
-                <YAxis tick={{ fill: '#6b7280', fontSize: 10 }} />
-                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: 8, fontSize: 12 }} />
-                <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 8, fontWeight: 'bold' }} axisLine={false} tickLine={false} />
+                <YAxis hide />
+                <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', padding: '10px' }} />
+                <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={15}>
                   {lineData.map((e, i) => <Cell key={i} fill={e.fill} />)}
                 </Bar>
               </BarChart>
@@ -395,98 +471,129 @@ export default function AdminDashboard({ onClose, user, onLogout }) {
           </div>
         </div>
 
-        {/* Charts Row 2 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-[#0f1728] border border-white/10 rounded-xl p-4">
-            <h3 className="text-sm font-bold text-white mb-3">📈 Feedback Trend</h3>
+        {/* Trends Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-6 rounded-[1.5rem] shadow-xl relative overflow-hidden group">
+            <h3 className="text-[10px] font-bold text-white tracking-[0.25em] mb-6 flex items-center gap-3">
+              <i className="fas fa-chart-line text-blue-500"></i> Temporal Intensity Metrics
+            </h3>
             <ResponsiveContainer width="100%" height={220}>
               <AreaChart data={trendData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
-                <XAxis dataKey="day" tick={{ fill: '#d1d5db', fontSize: 10 }} />
-                <YAxis tick={{ fill: '#6b7280', fontSize: 10 }} />
-                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: 8, fontSize: 12 }} />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
-                <Area type="monotone" dataKey="Negative" stackId="1" stroke="#ef4444" fill="#ef444440" />
-                <Area type="monotone" dataKey="Neutral" stackId="1" stroke="#eab308" fill="#eab30840" />
-                <Area type="monotone" dataKey="Positive" stackId="1" stroke="#22c55e" fill="#22c55e40" />
+                <defs>
+                  <linearGradient id="negTrend" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#ef4444" stopOpacity={0.2} /><stop offset="95%" stopColor="#ef4444" stopOpacity={0} /></linearGradient>
+                  <linearGradient id="posTrend" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#22c55e" stopOpacity={0.2} /><stop offset="95%" stopColor="#22c55e" stopOpacity={0} /></linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                <XAxis dataKey="day" tick={{ fill: '#94a3b8', fontSize: 8, fontWeight: 'bold' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: '#64748b', fontSize: 9 }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem' }} />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: '9px', fontWeight: 'bold' }} />
+                <Area type="monotone" dataKey="Negative" stackId="1" stroke="#ef4444" strokeWidth={3} fill="url(#negTrend)" />
+                <Area type="monotone" dataKey="Neutral" stackId="1" stroke="#eab308" strokeWidth={2} fill="transparent" />
+                <Area type="monotone" dataKey="Positive" stackId="1" stroke="#22c55e" strokeWidth={3} fill="url(#posTrend)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
-          <div className="bg-[#0f1728] border border-white/10 rounded-xl p-4">
-            <h3 className="text-sm font-bold text-white mb-3">🔴 Top Complaint Stations</h3>
-            <div className="space-y-2">
+
+          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-6 rounded-[1.5rem] shadow-xl relative overflow-hidden group">
+            <h3 className="text-[10px] font-bold text-white tracking-[0.25em] mb-6 flex items-center gap-3">
+              <i className="fas fa-fire text-red-500"></i> Operational Hotspots
+            </h3>
+            <div className="space-y-3">
               {stationHotspots.map((s, i) => {
                 const mx = stationHotspots[0]?.value || 1;
                 return (
-                  <div key={s.name} className="flex items-center gap-3">
-                    <span className="text-xs text-gray-500 w-5 text-right font-mono">#{i + 1}</span>
-                    <span className="text-xs text-white font-medium w-36 truncate">{s.name}</span>
-                    <div className="flex-1 bg-gray-800 rounded-full h-2">
-                      <div className="h-2 rounded-full transition-all" style={{ width: `${(s.value / mx) * 100}%`, backgroundColor: i < 2 ? '#ef4444' : i < 4 ? '#f97316' : '#eab308' }}></div>
+                  <div key={s.name} className="flex items-center gap-4 bg-black/20 p-2.5 rounded-xl border border-white/5 transition-all hover:bg-black/40">
+                    <span className="text-[10px] font-bold text-gray-600 w-5 text-center font-mono">#{i + 1}</span>
+                    <span className="text-[10px] font-bold text-white tracking-wide w-36 truncate">{s.name}</span>
+                    <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden">
+                      <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${(s.value / mx) * 100}%`, backgroundColor: i < 2 ? '#ef4444' : i < 4 ? '#f97316' : '#eab308', boxShadow: `0 0 10px ${i < 2 ? '#ef444440' : '#f9731640'}` }}></div>
                     </div>
-                    <span className="text-xs text-gray-400 w-8 text-right">{s.value}</span>
+                    <span className="text-[10px] font-bold text-gray-500 w-8 text-right font-mono">{s.value}</span>
                   </div>
                 );
               })}
-              {stationHotspots.length === 0 && <p className="text-xs text-gray-500 text-center py-8">No negative reports</p>}
+              {stationHotspots.length === 0 && <p className="text-[10px] font-bold text-gray-600 tracking-widest text-center py-12">Clear Sector Map</p>}
             </div>
           </div>
         </div>
 
-        {/* Feedback Table */}
-        <div className="bg-[#0f1728] border border-white/10 rounded-xl overflow-hidden">
-          <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white">📋 Recent Feedback ({filteredFeedbacks.length})</h3>
-            <div className="flex items-center gap-2 text-[11px] text-gray-400">
-              Page {currentPage} of {totalPages || 1}
-              <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="px-2 py-1 bg-white/5 rounded hover:bg-white/10 disabled:opacity-30 cursor-pointer">←</button>
-              <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage >= totalPages} className="px-2 py-1 bg-white/5 rounded hover:bg-white/10 disabled:opacity-30 cursor-pointer">→</button>
+        {/* Feedback Inventory */}
+        <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 rounded-[2rem] overflow-hidden shadow-2xl">
+          <div className="px-8 py-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+            <h3 className="text-[10px] font-bold text-white tracking-[0.25em]">Intelligence Inventory</h3>
+            <div className="flex items-center gap-4 text-[10px] font-bold tracking-widest text-gray-500">
+              Entry Cluster: <span className="text-blue-500">{currentPage}</span> / <span className="text-blue-500">{totalPages || 1}</span>
+              <div className="flex items-center gap-2 ml-4">
+                <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="w-8 h-8 flex items-center justify-center bg-[#020617] text-white rounded-lg border border-white/10 hover:border-blue-500/50 disabled:opacity-20 transition-all cursor-pointer shadow-lg active:scale-95">
+                  <i className="fas fa-chevron-left"></i>
+                </button>
+                <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage >= totalPages} className="w-8 h-8 flex items-center justify-center bg-[#020617] text-white rounded-lg border border-white/10 hover:border-blue-500/50 disabled:opacity-20 transition-all cursor-pointer shadow-lg active:scale-95">
+                  <i className="fas fa-chevron-right"></i>
+                </button>
+              </div>
             </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-xs">
+            <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-white/[0.03]">
-                  <th className="text-left px-4 py-2.5 text-gray-400 font-medium">Time</th>
-                  <th className="text-left px-4 py-2.5 text-gray-400 font-medium">Station</th>
-                  <th className="text-left px-4 py-2.5 text-gray-400 font-medium">Line</th>
-                  <th className="text-left px-4 py-2.5 text-gray-400 font-medium">Category</th>
-                  <th className="text-left px-4 py-2.5 text-gray-400 font-medium">Feedback</th>
-                  <th className="text-left px-4 py-2.5 text-gray-400 font-medium">Sentiment</th>
-                  <th className="text-left px-4 py-2.5 text-gray-400 font-medium">Severity</th>
-                  <th className="text-left px-4 py-2.5 text-gray-400 font-medium">👍</th>
+                <tr className="bg-black/20 text-[10px] font-bold text-gray-500 tracking-widest border-b border-white/5">
+                  <th className="px-8 py-5">Temporal Vector</th>
+                  <th className="px-8 py-5">Network Node</th>
+                  <th className="px-8 py-5">Intelligence Log</th>
+                  <th className="px-8 py-5 text-right">Polarity & Impact</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-white/[0.03]">
                 {paginated.map(f => (
-                  <tr key={f.id} className="border-t border-white/5 hover:bg-white/[0.03] transition-colors">
-                    <td className="px-4 py-2.5 text-gray-400 whitespace-nowrap">
-                      {f.timestamp.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })} {f.timestamp.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                  <tr key={f.id} className="hover:bg-white/[0.02] transition-colors group">
+                    <td className="px-8 py-6 whitespace-nowrap">
+                      <p className="text-[10px] font-bold text-white tracking-normal">{f.timestamp.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</p>
+                      <p className="text-[10px] font-bold text-gray-500 tracking-widest mt-0.5">{f.timestamp.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}</p>
                     </td>
-                    <td className="px-4 py-2.5 text-white font-medium">{f.station}</td>
-                    <td className="px-4 py-2.5">
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{ backgroundColor: LINE_COLORS[f.line] + '25', color: LINE_COLORS[f.line] }}>{f.line.replace(' Line', '')}</span>
-                    </td>
-                    <td className="px-4 py-2.5 text-gray-300">{f.category}</td>
-                    <td className="px-4 py-2.5 text-gray-300 max-w-[250px] truncate">{f.message}</td>
-                    <td className="px-4 py-2.5">
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{ backgroundColor: SC[f.sentiment] + '20', color: SC[f.sentiment] }}>
-                        {f.sentiment === 'Positive' ? '+' : f.sentiment === 'Neutral' ? '~' : '-'} {f.sentiment}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <div className="flex gap-0.5">
-                        {[1, 2, 3, 4, 5].map(s => (
-                          <div key={s} className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: s <= f.severity ? SEV_C[f.severity] : '#1f2937' }}></div>
-                        ))}
+                    <td className="px-8 py-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-8 rounded-full shadow-sm" style={{ backgroundColor: LINE_COLORS[f.line] }}></div>
+                        <div>
+                          <p className="text-sm font-bold text-white tracking-wide">{f.station}</p>
+                          <p className="text-[10px] font-bold tracking-widest" style={{ color: LINE_COLORS[f.line] }}>{f.line.replace(' Line', '')}</p>
+                        </div>
                       </div>
                     </td>
-                    <td className="px-4 py-2.5 text-gray-400">{f.upvotes}</td>
+                    <td className="px-8 py-6">
+                      <div className="max-w-md">
+                        <span className="text-[9px] font-bold text-blue-500 tracking-widest bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/20 mb-2 inline-block">{f.category}</span>
+                        <p className="text-sm text-gray-300 leading-relaxed font-medium">"{f.message}"</p>
+                      </div>
+                    </td>
+                    <td className="px-8 py-6">
+                      <div className="flex flex-col items-end gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg leading-none">
+                            {f.sentiment === 'Positive' ? <i className="fas fa-smile text-emerald-500"></i> :
+                              f.sentiment === 'Neutral' ? <i className="fas fa-meh text-amber-500"></i> :
+                                <i className="fas fa-frown text-red-500"></i>}
+                          </span>
+                          <span className="text-[10px] font-bold tracking-widest" style={{ color: SC[f.sentiment] }}>{f.sentiment}</span>
+                        </div>
+                        <div className="flex gap-0.5">
+                          {[1, 2, 3, 4, 5].map(s => (
+                            <div key={s} className="w-3 h-1 rounded-full shadow-sm" style={{ backgroundColor: s <= f.severity ? SEV_C[f.severity] : '#1f2937' }}></div>
+                          ))}
+                        </div>
+                        <span className="text-[9px] font-semibold text-gray-600 tracking-widest mt-1">Impact: {f.upvotes} units</span>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          {paginated.length === 0 && (
+            <div className="py-20 text-center bg-black/20">
+              <h4 className="text-[10px] font-bold text-gray-600 tracking-widest">Inventory Void</h4>
+            </div>
+          )}
         </div>
       </div>
     </div>

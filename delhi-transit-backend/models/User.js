@@ -58,6 +58,13 @@ const userSchema = new mongoose.Schema({
       enum: ['light', 'dark'],
       default: 'light'
     }
+  },
+  oauthProvider: {
+    type: String,
+    enum: ['google', 'github', 'facebook', 'microsoft'],
+  },
+  oauthId: {
+    type: String,
   }
 }, {
   timestamps: true

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Header({ onAdminClick }) {
+export default function Header({ onAdminClick, onMetroMapClick }) {
   const [open, setOpen] = useState(false);
 
   const scrollTo = (id) => {
@@ -68,29 +68,20 @@ export default function Header({ onAdminClick }) {
             <button onClick={() => scrollTo("features")} className="nav-dark">
               Features
             </button>
-            <button onClick={() => scrollTo("metro-map")} className="nav-dark">
+            <button onClick={onMetroMapClick} className="nav-dark">
               Metro Map
             </button>
-            <button onClick={() => scrollTo("routes")} className="nav-dark">
+            <button onClick={() => scrollTo("transit-network")} className="nav-dark">
               Routes
             </button>
 
             <button
               onClick={onAdminClick}
-              className="px-4 py-2 rounded-lg text-white text-xs
-                         bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 transition
-                         shadow-[0_0_15px_rgba(139,92,246,0.5)] cursor-pointer"
-            >
-              📊 Admin
-            </button>
-
-            <button
-              onClick={() => scrollTo("home")}
               className="px-6 py-2 rounded-lg text-white
                          bg-blue-600 hover:bg-blue-500 transition
                          shadow-[0_0_15px_rgba(59,130,246,0.7)] cursor-pointer"
             >
-              Get Started
+              Admin
             </button>
           </div>
 
@@ -109,13 +100,13 @@ export default function Header({ onAdminClick }) {
             {[
               ["Home", "home"],
               ["Features", "features"],
-              ["Metro Map", "metro-map"],
-              ["Routes", "routes"],
+              ["Metro Map", "onMetroMapClick"],
+              ["Routes", "transit-network"],
               ["Fare Calculator", "fare-calculator"],
             ].map(([label, id]) => (
               <button
                 key={id}
-                onClick={() => scrollTo(id)}
+                onClick={label === "Metro Map" ? onMetroMapClick : () => scrollTo(id)}
                 className="block w-full text-left text-gray-300
                            hover:text-blue-400 transition"
               >

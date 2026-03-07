@@ -2,23 +2,23 @@ import { useState, useRef, useEffect } from "react";
 import { searchAll } from "../utils/routeSearch";
 
 const CATEGORY_ICONS = {
-  station: '🚇',
-  Monument: '🏛️',
-  Market: '🛒',
-  Hospital: '🏥',
-  University: '🎓',
-  Transport: '🚉',
-  Government: '🏛️',
-  Park: '🌳',
-  Temple: '🛕',
-  Mall: '🏬',
-  Stadium: '🏟️',
-  Museum: '🖼️',
-  Office: '🏢',
-  Restaurant: '🍴',
-  Residential: '🏘️',
-  Cinema: '🎬',
-  Hotel: '🏨',
+  station: 'fas fa-subway',
+  Monument: 'fas fa-landmark',
+  Market: 'fas fa-shopping-cart',
+  Hospital: 'fas fa-hospital',
+  University: 'fas fa-graduation-cap',
+  Transport: 'fas fa-bus-alt',
+  Government: 'fas fa-building',
+  Park: 'fas fa-tree',
+  Temple: 'fas fa-place-of-worship',
+  Mall: 'fas fa-shopping-bag',
+  Stadium: 'fas fa-republican',
+  Museum: 'fas fa-palette',
+  Office: 'fas fa-briefcase',
+  Restaurant: 'fas fa-utensils',
+  Residential: 'fas fa-home',
+  Cinema: 'fas fa-film',
+  Hotel: 'fas fa-hotel',
 };
 
 export default function Hero({
@@ -126,8 +126,8 @@ export default function Hero({
                         className="px-4 py-2.5 hover:bg-blue-900/40 cursor-pointer text-left text-gray-200 text-sm border-b border-gray-800 last:border-b-0 transition-colors flex items-center gap-2"
                         onClick={() => selectFromStation(item.name)}
                       >
-                        <span>{CATEGORY_ICONS[item.type === 'station' ? 'station' : item.category] || '📍'}</span>
-                        <span>{item.name}</span>
+                        <i className={`text-blue-500 text-[10px] ${CATEGORY_ICONS[item.type === 'station' ? 'station' : item.category] || 'fas fa-location-dot'}`}></i>
+                        <span className="font-bold uppercase tracking-tighter">{item.name}</span>
                         {item.type === 'place' && <span className="text-[10px] text-gray-500 ml-auto">{item.category}</span>}
                       </div>
                     ))}
@@ -208,7 +208,7 @@ export default function Hero({
 
               {/* Button */}
               <button
-                onClick={onFindRoute}
+                onClick={() => onFindRoute({ fastest, cheapest, lessWalking })}
                 disabled={loading}
                 className="flex items-center justify-center gap-2
                            px-8 py-3 rounded-xl font-medium text-white

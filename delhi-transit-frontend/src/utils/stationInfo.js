@@ -40,11 +40,11 @@ const MAJOR_STATIONS = new Set([
 
 // Machine types that can be defective
 const MACHINE_TYPES = [
-    { type: 'TVM', label: 'Ticket Vending Machine', icon: '🎫' },
-    { type: 'Escalator', label: 'Escalator', icon: '🔼' },
-    { type: 'Lift', label: 'Lift / Elevator', icon: '🛗' },
-    { type: 'Gate', label: 'Entry/Exit Gate', icon: '🚪' },
-    { type: 'Display', label: 'Info Display Board', icon: '📺' },
+    { type: 'TVM', label: 'Ticket Vending Machine', icon: 'fas fa-ticket-alt' },
+    { type: 'Escalator', label: 'Escalator', icon: 'fas fa-stairwell' },
+    { type: 'Lift', label: 'Lift / Elevator', icon: 'fas fa-elevator' },
+    { type: 'Gate', label: 'Entry/Exit Gate', icon: 'fas fa-door-open' },
+    { type: 'Display', label: 'Info Display Board', icon: 'fas fa-desktop' },
 ];
 
 // Peak hour definitions
@@ -110,12 +110,12 @@ export function getCrowdLevel(stationName, currentTime = new Date()) {
  */
 export function getTimePeriod(currentTime = new Date()) {
     const hour = currentTime.getHours();
-    if (hour >= 22 || hour < 6) return { label: 'Late Night', emoji: '🌙' };
-    if (hour >= PEAK_HOURS.morningStart && hour < PEAK_HOURS.morningEnd) return { label: 'Morning Rush', emoji: '🌅' };
-    if (hour >= PEAK_HOURS.eveningStart && hour < PEAK_HOURS.eveningEnd) return { label: 'Evening Rush', emoji: '🌇' };
-    if (hour >= 6 && hour < 12) return { label: 'Morning', emoji: '☀️' };
-    if (hour >= 12 && hour < 17) return { label: 'Afternoon', emoji: '🌤️' };
-    return { label: 'Evening', emoji: '🌆' };
+    if (hour >= 22 || hour < 6) return { label: 'Operational Standby', icon: 'fas fa-moon' };
+    if (hour >= PEAK_HOURS.morningStart && hour < PEAK_HOURS.morningEnd) return { label: 'AM Peak Flow', icon: 'fas fa-sun' };
+    if (hour >= PEAK_HOURS.eveningStart && hour < PEAK_HOURS.eveningEnd) return { label: 'PM Peak Flow', icon: 'fas fa-city' };
+    if (hour >= 6 && hour < 12) return { label: 'Morning Protocol', icon: 'fas fa-sun' };
+    if (hour >= 12 && hour < 17) return { label: 'Mid-Day Operations', icon: 'fas fa-cloud-sun' };
+    return { label: 'Evening Protocol', icon: 'fas fa-moon' };
 }
 
 // ---- Defective machines state (in-memory, persists during session) ----

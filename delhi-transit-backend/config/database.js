@@ -1,4 +1,8 @@
 const mongoose = require('mongoose');
+const dns = require('dns');
+
+// Fix for querySrv ECONNREFUSED issues with MongoDB Atlas
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 const connectDatabase = async () => {
   try {
@@ -22,4 +26,4 @@ const connectDatabase = async () => {
   }
 };
 
-module.exports = { connectDatabase };
+module.exports = connectDatabase;

@@ -191,10 +191,10 @@ function buildGraph() {
 }
 
 /**
- * BFS to find the shortest path between two stations
- * Returns { path: [{name, coords, lineKey, lineName, lineColor}], transfers: number } or null
+ * Find the optimal route between two stations using Dijkstra's algorithm
+ * Options: { fastest, cheapest, minInterchange }
  */
-export function findRoute(fromName, toName) {
+export function findRoute(fromName, toName, options = {}) {
     if (!fromName || !toName) return null;
 
     const from = fromName.toLowerCase().trim();
@@ -204,36 +204,82 @@ export function findRoute(fromName, toName) {
     const graph = buildGraph();
     if (!graph[from] || !graph[to]) return null;
 
-    // Find the from station's info
-    const fromLines = findStationOnLines(fromName);
-    if (fromLines.length === 0) return null;
+    // Weights configuration based on options
+    // Default weights: station=1, transfer=5
+    let stationWeight = 1;
+    let transferWeight = 5;
 
-    // Simple BFS for shortest path
-    const simpleQueue = [{ name: from, path: [from] }];
-    const simpleVisited = new Set([from]);
+    if (options.cheapest) {
+        // Cheapest focuses on fewer stations (since fare is station-based)
+        stationWeight = 2;
+        transferWeight = 2;
+    }
+    
+    if (options.minInterchange || options.lessWalking) {
+        // High penalty for transfers to minimize walking
+        transferWeight = 20;
+    }
 
-    while (simpleQueue.length > 0) {
-        const current = simpleQueue.shift();
+    // Dijkstra's algorithm
+    const distances = {};
+    const previous = {};
+    const nodesUsed = {}; // to store line info
+    const pQueue = new Set();
 
-        if (current.name === to) {
-            // Reconstruct with full station data
-            return reconstructPath(current.path);
+    Object.keys(graph).forEach(node => {
+        distances[node] = Infinity;
+        previous[node] = null;
+        nodesUsed[node] = null;
+    });
+
+    distances[from] = 0;
+    pQueue.add(from);
+
+    while (pQueue.size > 0) {
+        // Get node with minimum distance
+        let minNode = null;
+        for (const node of pQueue) {
+            if (!minNode || distances[node] < distances[minNode]) {
+                minNode = node;
+            }
         }
 
-        const neighbors = graph[current.name] || [];
+        if (!minNode || minNode === to) break;
+        pQueue.delete(minNode);
+
+        const currentLine = nodesUsed[minNode];
+        const neighbors = graph[minNode] || [];
+
         for (const neighbor of neighbors) {
             const neighborName = neighbor.station.name.toLowerCase();
-            if (!simpleVisited.has(neighborName)) {
-                simpleVisited.add(neighborName);
-                simpleQueue.push({
-                    name: neighborName,
-                    path: [...current.path, neighborName]
-                });
+            
+            // Calculate edge weight
+            // If line changes, add transfer weight
+            const isTransfer = currentLine && currentLine !== neighbor.lineKey;
+            const weight = stationWeight + (isTransfer ? transferWeight : 0);
+            
+            const alt = distances[minNode] + weight;
+            
+            if (alt < distances[neighborName]) {
+                distances[neighborName] = alt;
+                previous[neighborName] = minNode;
+                nodesUsed[neighborName] = neighbor.lineKey;
+                pQueue.add(neighborName);
             }
         }
     }
 
-    return null; // No route found
+    if (distances[to] === Infinity) return null;
+
+    // Reconstruct path name sequence
+    const nameSequence = [];
+    let curr = to;
+    while (curr) {
+        nameSequence.unshift(curr);
+        curr = previous[curr];
+    }
+
+    return reconstructPath(nameSequence);
 }
 
 /**

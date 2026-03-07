@@ -2,7 +2,7 @@ import { popularRoutes } from "../data/routesData";
 
 export default function PopularRoutes({ onPlanRoute }) {
   return (
-    <section className="mt-12">
+    <section id="popular-routes" className="mt-12">
       <h3 className="text-2xl font-bold text-gray-100 mb-8">
         Popular Delhi Routes
       </h3>
@@ -50,7 +50,9 @@ export default function PopularRoutes({ onPlanRoute }) {
                          hover:text-blue-300 transition
                          hover:drop-shadow-[0_0_10px_rgba(59,130,246,0.7)]"
             >
-              Plan this route →
+              <span className="flex items-center gap-2 group-hover:gap-3 transition-all">
+                PLAN THIS VECTOR <i className="fas fa-chevron-right text-[10px]"></i>
+              </span>
             </button>
           </div>
         ))}

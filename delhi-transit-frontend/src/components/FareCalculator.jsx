@@ -40,14 +40,18 @@ export default function FareCalculator({ selectedRoute }) {
   const [distance, setDistance] = useState("");
   const [showFares, setShowFares] = useState(false);
 
+  // Derive display values from route
+  const stationCount = selectedRoute?.path?.length || selectedRoute?.stops?.length || 0;
+  const routeName = selectedRoute
+    ? `${selectedRoute.from?.name || 'Start'} → ${selectedRoute.to?.name || 'End'}`
+    : null;
+
   useEffect(() => {
     if (!selectedRoute) return;
-    // Handle both formats: searchedRoute has 'path', selectedRoute has 'stops'
-    const stationCount = selectedRoute.path?.length || selectedRoute.stops?.length || 0;
     const estimatedKm = Math.round(stationCount * 1.8);
     setDistance(estimatedKm);
     setShowFares(false);
-  }, [selectedRoute]);
+  }, [selectedRoute, stationCount]);
 
   const fares = useMemo(() => {
     const km = Number(distance);
@@ -92,11 +96,11 @@ export default function FareCalculator({ selectedRoute }) {
           <h3 className="text-2xl font-bold text-white flex items-center gap-2">
             Fare Calculator
           </h3>
-          <p className="text-sm text-gray-400 mt-1">{selectedRoute.name || 'Your Route'}</p>
+          <p className="text-sm text-gray-400 mt-1">{routeName}</p>
         </div>
         <div className="text-right">
           <div className="text-xs text-gray-500">Stations</div>
-          <div className="text-lg font-bold text-blue-400">{selectedRoute.path?.length || selectedRoute.stops?.length || 0}</div>
+          <div className="text-lg font-bold text-blue-400">{stationCount}</div>
         </div>
       </div>
 
@@ -128,7 +132,8 @@ export default function FareCalculator({ selectedRoute }) {
 
       {/* Fare Results */}
       {showFares && fares && (
-        <div className="space-y-4 animate-[fadeIn_0.3s_ease-out]">
+        <div className="space-y-4" style={{ animation: 'fareCalcFadeIn 0.3s ease-out' }}>
+          <style>{`@keyframes fareCalcFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }`}</style>
 
           {/* Individual Fares Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -195,12 +200,17 @@ export default function FareCalculator({ selectedRoute }) {
 
           {/* Cheapest Option Highlight */}
           <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4">
-            <div className="text-sm font-semibold text-emerald-400">Cheapest Option</div>
+            <div className="text-sm font-semibold text-emerald-400">💡 Cheapest Option</div>
             <div className="text-xs text-gray-400">
               {fares.busNonAC <= fares.metro
                 ? `Non-AC Bus at just ₹${fares.busNonAC} — saves ₹${fares.cab - fares.busNonAC} vs cab`
                 : `Metro at ₹${fares.metro} — saves ₹${fares.cab - fares.metro} vs cab`}
             </div>
+            {selectedRoute?.estimatedFare && (
+              <div className="text-xs text-emerald-300/70 mt-1">
+                Route's estimated metro fare: ₹{selectedRoute.estimatedFare}
+              </div>
+            )}
           </div>
 
           {/* Fare Disclaimer */}

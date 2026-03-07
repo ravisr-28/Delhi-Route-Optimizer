@@ -73,15 +73,15 @@ export function estimateBus(fromCoords, toCoords) {
 
 // Get metro crowd status summary for a route
 export function getMetroCrowdSummary(path) {
-    if (!path || path.length === 0) return { level: 'Low', color: '#22c55e', percent: 15, emoji: '😊' };
+    if (!path || path.length === 0) return { level: 'Low', color: '#22c55e', percent: 15, icon: 'fas fa-check-circle' };
     let totalPercent = 0;
     path.forEach(step => {
         const crowd = getCrowdLevel(step.name);
         totalPercent += crowd.percent;
     });
     const avgPercent = Math.round(totalPercent / path.length);
-    if (avgPercent >= 75) return { level: 'Very Crowded', color: '#ef4444', percent: avgPercent, emoji: '😰' };
-    if (avgPercent >= 55) return { level: 'Crowded', color: '#f97316', percent: avgPercent, emoji: '😟' };
-    if (avgPercent >= 35) return { level: 'Moderate', color: '#eab308', percent: avgPercent, emoji: '🙂' };
-    return { level: 'Comfortable', color: '#22c55e', percent: avgPercent, emoji: '😊' };
+    if (avgPercent >= 75) return { level: 'Very Crowded', color: '#ef4444', percent: avgPercent, icon: 'fas fa-users' };
+    if (avgPercent >= 55) return { level: 'Crowded', color: '#f97316', percent: avgPercent, icon: 'fas fa-user-friends' };
+    if (avgPercent >= 35) return { level: 'Moderate', color: '#eab308', percent: avgPercent, icon: 'fas fa-user' };
+    return { level: 'Comfortable', color: '#22c55e', percent: avgPercent, icon: 'fas fa-smile-beam' };
 }

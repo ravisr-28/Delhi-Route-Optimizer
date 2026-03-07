@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function Footer() {
+export default function Footer({ onLinkClick }) {
   const [quickLinks, setQuickLinks] = useState([]);
   const [transportLinks, setTransportLinks] = useState([]);
   const [email, setEmail] = useState("");
@@ -23,13 +23,41 @@ export default function Footer() {
     ]);
   }, []);
 
-  const handleSubscribe = () => {
+  const handleSubscribe = async () => {
     if (!email) {
       alert("Please enter your email");
       return;
     }
-    alert(`Subscribed with: ${email}`);
-    setEmail("");
+
+    const API_BASE = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : "http://localhost:5000/api";
+    try {
+      const response = await fetch(`${API_BASE}/newsletter/subscribe`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message || "Thank you for subscribing! Check your email for a welcome message.");
+        setEmail("");
+      } else {
+        alert(data.message || "Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      console.error("Subscription error:", error);
+      alert("Fail connectivity to server. Please try again later.");
+    }
+  };
+
+  const handleClick = (e, link) => {
+    if (onLinkClick) {
+      e.preventDefault();
+      onLinkClick(link);
+    }
   };
 
   return (
@@ -85,6 +113,7 @@ export default function Footer() {
                 <li key={index}>
                   <a
                     href="#"
+                    onClick={(e) => handleClick(e, link)}
                     className="hover:text-blue-400 transition"
                   >
                     {link}
@@ -104,6 +133,7 @@ export default function Footer() {
                 <li key={index}>
                   <a
                     href="#"
+                    onClick={(e) => handleClick(e, link)}
                     className="hover:text-blue-400 transition"
                   >
                     {link}

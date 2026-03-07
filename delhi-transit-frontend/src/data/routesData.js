@@ -1,3 +1,7 @@
+import chandniChowkImg from "../assets/routes/chandni_chowk.png";
+import connaughtPlaceImg from "../assets/routes/connaught_place.png";
+import indiaGateImg from "../assets/routes/india_gate.png";
+
 export const metroLines = [
   { id: 1, name: "Red Line", color: "#FF6B35", stations: 29, length: "34.5 km" },
   { id: 2, name: "Yellow Line", color: "#FFD700", stations: 37, length: "49.3 km" },
@@ -14,7 +18,7 @@ export const popularRoutes = [
     to: "Chandni Chowk",
     time: "25 mins",
     fare: "₹40",
-    image: "https://picsum.photos/80/80?random=1",
+    image: chandniChowkImg,
   },
   {
     id: 2,
@@ -22,7 +26,7 @@ export const popularRoutes = [
     to: "Connaught Place",
     time: "35 mins",
     fare: "₹30",
-    image: "https://picsum.photos/80/80?random=2",
+    image: connaughtPlaceImg,
   },
   {
     id: 3,
@@ -30,6 +34,6 @@ export const popularRoutes = [
     to: "India Gate",
     time: "40 mins",
     fare: "₹35",
-    image: "https://picsum.photos/80/80?random=3",
+    image: indiaGateImg,
   },
 ];
