@@ -189,7 +189,11 @@ export default function AdminDashboard({ onClose, user, onLogout }) {
   const lineData = useMemo(() => {
     const c = {};
     filteredFeedbacks.forEach(f => { c[f.line] = (c[f.line] || 0) + 1; });
-    return Object.entries(c).map(([name, value]) => ({ name: name.replace(' Line', ''), value, fill: LINE_COLORS[name] || '#6b7280' })).sort((a, b) => b.value - a.value);
+    const SHORT = { Red: 'Red', Yellow: 'Yel', Blue: 'Blue', Green: 'Grn', Violet: 'Vio', Magenta: 'Mag', Pink: 'Pink', Orange: 'Org' };
+    return Object.entries(c).map(([name, value]) => {
+      const short = name.replace(' Line', '');
+      return { name: SHORT[short] || short, fullName: short, value, fill: LINE_COLORS[name] || '#6b7280' };
+    }).sort((a, b) => b.value - a.value);
   }, [filteredFeedbacks]);
 
   const trendData = useMemo(() => {
@@ -228,78 +232,80 @@ export default function AdminDashboard({ onClose, user, onLogout }) {
   return (
     <div className="min-h-screen bg-[#020617] text-gray-100 font-sans selection:bg-blue-500/30 selection:text-white">
       {/* Top bar */}
-      <div className="bg-[#0f172a]/60 backdrop-blur-2xl border-b border-white/5 px-8 py-5 flex items-center justify-between sticky top-0 z-50 shadow-2xl shadow-black/20">
-        <div className="flex items-center gap-5">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-xl shadow-xl shadow-blue-500/20 relative group overflow-hidden">
-            <div className="absolute inset-0 bg-white/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <i className="fas fa-chart-line relative"></i>
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-white tracking-normal font-display">Operations Intel</h1>
-            <p className="text-[10px] font-bold text-gray-500 tracking-[0.2em] mt-0.5">Delhi Transit • Live Crowdsourced Analytics</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-6">
-          <div className="hidden lg:block text-right">
-            <p className="text-[10px] font-bold text-gray-500 tracking-widest leading-none mb-1">{dateStr}</p>
-            <p className="text-sm font-bold text-blue-400 tracking-wide">{timeStr}</p>
-          </div>
-          <div className="h-10 w-px bg-white/5 mx-2 hidden lg:block"></div>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-            <span className="text-[10px] font-bold text-blue-400 tracking-widest">Live Syncing</span>
-          </div>
-          <button onClick={onClose} className="px-5 py-2.5 text-xs font-bold bg-[#020617] border border-gray-800 hover:border-blue-500/50 hover:text-white rounded-xl transition-all cursor-pointer shadow-lg active:scale-95">
-            <i className="fas fa-chevron-left mr-2"></i> Exit Terminal
-          </button>
-          {user && (
-            <div className="flex items-center gap-4 pl-6 border-l border-white/5">
-              <div className="text-right">
-                <p className="text-xs text-white font-bold tracking-wide">{user.name || user.username}</p>
-                <p className="text-[9px] font-bold text-gray-500 tracking-widest">{user.role === 'super_admin' ? 'System Overseer' : 'Traffic Mod'}</p>
-              </div>
-              <button onClick={onLogout} className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all cursor-pointer border border-red-500/20">
-                <i className="fas fa-power-off"></i>
-              </button>
+      <div className="bg-[#0f172a]/60 backdrop-blur-2xl border-b border-white/5 px-4 sm:px-6 lg:px-8 py-4 sm:py-5 sticky top-0 z-50 shadow-2xl shadow-black/20">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 sm:gap-5 min-w-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-lg sm:text-xl shadow-xl shadow-blue-500/20 flex-shrink-0 relative group overflow-hidden">
+              <div className="absolute inset-0 bg-white/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <i className="fas fa-chart-line relative"></i>
             </div>
-          )}
+            <div className="min-w-0">
+              <h1 className="text-base sm:text-xl font-bold text-white tracking-normal font-display truncate">Operations Intel</h1>
+              <p className="text-[9px] sm:text-[10px] font-bold text-gray-500 tracking-[0.1em] sm:tracking-[0.2em] mt-0.5 hidden sm:block">Delhi Transit • Live Analytics</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 flex-shrink-0">
+            <div className="hidden lg:block text-right">
+              <p className="text-[10px] font-bold text-gray-500 tracking-widest leading-none mb-1">{dateStr}</p>
+              <p className="text-sm font-bold text-blue-400 tracking-wide">{timeStr}</p>
+            </div>
+            <div className="h-10 w-px bg-white/5 mx-2 hidden lg:block"></div>
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20">
+              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+              <span className="text-[10px] font-bold text-blue-400 tracking-widest">Live</span>
+            </div>
+            <button onClick={onClose} className="px-3 sm:px-5 py-2 sm:py-2.5 text-[10px] sm:text-xs font-bold bg-[#020617] border border-gray-800 hover:border-blue-500/50 hover:text-white rounded-xl transition-all cursor-pointer shadow-lg active:scale-95">
+              <i className="fas fa-chevron-left sm:mr-2"></i> <span className="hidden sm:inline">Exit</span>
+            </button>
+            {user && (
+              <div className="flex items-center gap-2 sm:gap-4 pl-2 sm:pl-6 border-l border-white/5">
+                <div className="text-right hidden md:block">
+                  <p className="text-xs text-white font-bold tracking-wide">{user.name || user.username}</p>
+                  <p className="text-[9px] font-bold text-gray-500 tracking-widest">{user.role === 'super_admin' ? 'System Overseer' : 'Traffic Mod'}</p>
+                </div>
+                <button onClick={onLogout} className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all cursor-pointer border border-red-500/20">
+                  <i className="fas fa-power-off"></i>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="max-w-[1440px] mx-auto px-8 py-8 space-y-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
 
         {/* Metro Status Banner */}
-        <div className="rounded-[2rem] p-6 border-2 flex items-center justify-between relative overflow-hidden group shadow-2xl"
+        <div className="rounded-2xl sm:rounded-[2rem] p-4 sm:p-6 border-2 flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden group shadow-2xl"
           style={{ borderColor: pInfo.color + '20', backgroundColor: pInfo.color + '05' }}>
 
           {/* Animated glow */}
           <div className="absolute -left-20 -top-20 w-60 h-60 rounded-full blur-[100px] opacity-20 transition-opacity group-hover:opacity-30"
             style={{ backgroundColor: pInfo.color }}></div>
 
-          <div className="flex items-center gap-6 relative">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl shadow-xl shadow-black/40 relative overflow-hidden"
+          <div className="flex items-center gap-4 sm:gap-6 relative min-w-0">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center text-2xl sm:text-4xl shadow-xl shadow-black/40 relative overflow-hidden flex-shrink-0"
               style={{ backgroundColor: pInfo.color + '20', border: `1px solid ${pInfo.color}30` }}>
               <div className="absolute inset-0 bg-white/5 blur-lg"></div>
-              <i className={`${pInfo.icon || 'fas fa-clock'} text-lg`}></i>
+              <i className={`${pInfo.icon || 'fas fa-clock'} text-base sm:text-lg`}></i>
             </div>
-            <div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold text-white tracking-normal font-display">{pInfo.label} Status</span>
-                <span className="text-[10px] font-bold px-3 py-1 rounded-full tracking-widest shadow-inner"
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <span className="text-lg sm:text-2xl font-bold text-white tracking-normal font-display">{pInfo.label}</span>
+                <span className="text-[9px] sm:text-[10px] font-bold px-2 sm:px-3 py-1 rounded-full tracking-widest shadow-inner"
                   style={{ backgroundColor: pInfo.color + '20', color: pInfo.color, border: `1px solid ${pInfo.color}30` }}>
-                  {metroOpen ? 'Network Operational' : 'Network Hibernating'}
+                  {metroOpen ? 'Operational' : 'Hibernating'}
                 </span>
               </div>
-              <p className="text-sm text-gray-400 mt-2 font-medium tracking-wide">{pInfo.desc}</p>
+              <p className="text-xs sm:text-sm text-gray-400 mt-1 sm:mt-2 font-medium tracking-wide">{pInfo.desc}</p>
             </div>
           </div>
-          <div className="text-right relative">
-            <p className="text-[10px] font-bold text-gray-500 tracking-[0.2em] mb-2 px-3 py-1 bg-black/30 rounded-full w-fit ml-auto">Intelligence Feed Active</p>
-            <p className="text-sm font-bold tracking-wide" style={{ color: pInfo.color }}>
-              {period === 'closed' ? '🚨 CRITICAL: Service suspended, monitoring infrastructure integrity.' :
-                period === 'morning_rush' || period === 'evening_rush' ? '⚠️ ADVISORY: Peak load detected. Prioritizing overcrowding telemetry.' :
-                  period === 'early_morning' ? '✅ NORMAL: High maintenance standards reported. Stations clean.' :
-                    '✅ BALANCED: Nominal commuter flow across all sectors.'}
+          <div className="text-left md:text-right relative">
+            <p className="text-[9px] sm:text-[10px] font-bold text-gray-500 tracking-[0.15em] sm:tracking-[0.2em] mb-2 px-2 sm:px-3 py-1 bg-black/30 rounded-full w-fit md:ml-auto">Intelligence Feed Active</p>
+            <p className="text-xs sm:text-sm font-bold tracking-wide" style={{ color: pInfo.color }}>
+              {period === 'closed' ? '🚨 Service suspended' :
+                period === 'morning_rush' || period === 'evening_rush' ? '⚠️ Peak load detected' :
+                  period === 'early_morning' ? '✅ Stations clean' :
+                    '✅ Nominal commuter flow'}
             </p>
           </div>
         </div>
@@ -316,11 +322,11 @@ export default function AdminDashboard({ onClose, user, onLogout }) {
             </h3>
             <div className="space-y-2">
               {liveFeed.map((f, i) => (
-                <div key={f.id} className={`flex items-center gap-4 text-xs font-medium px-4 py-3 rounded-xl transition-all hover:bg-white/5 ${i === 0 ? 'bg-blue-600/10 ring-1 ring-blue-500/20' : 'bg-black/20'}`}>
-                  <span className="text-gray-500 font-mono w-20 tracking-normal">{f.timestamp.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}</span>
-                  <span className="text-white font-bold w-40 tracking-wide">{f.station}</span>
-                  <span className="px-2 py-0.5 rounded-lg text-[10px] font-bold tracking-widest border border-white/5 shadow-sm" style={{ backgroundColor: LINE_COLORS[f.line] + '30', color: LINE_COLORS[f.line], borderColor: LINE_COLORS[f.line] + '40' }}>{f.line.replace(' Line', '')}</span>
-                  <span className="text-gray-400 flex-1">"{f.message}"</span>
+                <div key={f.id} className={`flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-4 text-xs font-medium px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl transition-all hover:bg-white/5 ${i === 0 ? 'bg-blue-600/10 ring-1 ring-blue-500/20' : 'bg-black/20'}`}>
+                  <span className="text-gray-500 font-mono text-[10px] sm:text-xs tracking-normal">{f.timestamp.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}</span>
+                  <span className="text-white font-bold tracking-wide truncate max-w-[120px] sm:max-w-none">{f.station}</span>
+                  <span className="px-2 py-0.5 rounded-lg text-[9px] sm:text-[10px] font-bold tracking-widest border border-white/5 shadow-sm" style={{ backgroundColor: LINE_COLORS[f.line] + '30', color: LINE_COLORS[f.line], borderColor: LINE_COLORS[f.line] + '40' }}>{f.line.replace(' Line', '')}</span>
+                  <span className="text-gray-400 hidden sm:inline flex-1 truncate">"{f.message}"</span>
                   <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-black/40 border border-white/5">
                     <span className="text-lg leading-none">
                       {f.sentiment === 'Positive' ? <i className="fas fa-smile text-emerald-500"></i> :
@@ -336,87 +342,88 @@ export default function AdminDashboard({ onClose, user, onLogout }) {
         )}
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-6 rounded-[1.5rem] hover:border-blue-500/30 transition-all shadow-xl group">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-500 text-xl border border-blue-500/20 shadow-lg shadow-blue-500/5 group-hover:scale-110 transition-transform">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-3 sm:p-6 rounded-xl sm:rounded-[1.5rem] hover:border-blue-500/30 transition-all shadow-xl group">
+            <div className="flex items-center justify-between mb-2 sm:mb-4 gap-1">
+              <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-500 text-sm sm:text-xl border border-blue-500/20 shadow-lg shadow-blue-500/5 group-hover:scale-110 transition-transform flex-shrink-0">
                 <i className="fas fa-file-alt"></i>
               </div>
-              <span className="text-[10px] font-bold text-emerald-500 tracking-widest bg-emerald-500/10 px-2 py-1 rounded-lg">Total</span>
+              <span className="text-[8px] sm:text-[10px] font-bold text-emerald-500 tracking-wider sm:tracking-widest bg-emerald-500/10 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg">Total</span>
             </div>
-            <p className="text-3xl font-bold text-white tracking-normal font-display">{totalReports}</p>
-            <p className="text-[10px] font-bold text-gray-500 tracking-[0.2em] mt-1">Intelligence Logs</p>
+            <p className="text-xl sm:text-3xl font-bold text-white tracking-normal font-display">{totalReports}</p>
+            <p className="text-[8px] sm:text-[10px] font-bold text-gray-500 tracking-wider sm:tracking-[0.2em] mt-1">Intelligence Logs</p>
           </div>
 
-          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-6 rounded-[1.5rem] hover:border-blue-500/30 transition-all shadow-xl group">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-red-600/10 flex items-center justify-center text-red-500 text-xl border border-red-500/20 shadow-lg shadow-red-500/5 group-hover:scale-110 transition-transform">
+          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-3 sm:p-6 rounded-xl sm:rounded-[1.5rem] hover:border-blue-500/30 transition-all shadow-xl group">
+            <div className="flex items-center justify-between mb-2 sm:mb-4 gap-1">
+              <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-red-600/10 flex items-center justify-center text-red-500 text-sm sm:text-xl border border-red-500/20 shadow-lg shadow-red-500/5 group-hover:scale-110 transition-transform flex-shrink-0">
                 <i className="fas fa-exclamation-circle"></i>
               </div>
-              <span className="text-[10px] font-bold text-red-500 tracking-widest bg-red-500/10 px-2 py-1 rounded-lg">Critical</span>
+              <span className="text-[8px] sm:text-[10px] font-bold text-red-500 tracking-wider sm:tracking-widest bg-red-500/10 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg">Critical</span>
             </div>
-            <p className="text-3xl font-bold text-white tracking-normal font-display">{negPct}%</p>
-            <p className="text-[10px] font-bold text-gray-500 tracking-[0.2em] mt-1">Negativity Index</p>
+            <p className="text-xl sm:text-3xl font-bold text-white tracking-normal font-display">{negPct}%</p>
+            <p className="text-[8px] sm:text-[10px] font-bold text-gray-500 tracking-wider sm:tracking-[0.2em] mt-1">Negativity Index</p>
           </div>
 
-          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-6 rounded-[1.5rem] hover:border-blue-500/30 transition-all shadow-xl group">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-orange-600/10 flex items-center justify-center text-orange-500 text-xl border border-orange-500/20 shadow-lg shadow-orange-500/5 group-hover:scale-110 transition-transform">
+          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-3 sm:p-6 rounded-xl sm:rounded-[1.5rem] hover:border-blue-500/30 transition-all shadow-xl group">
+            <div className="flex items-center justify-between mb-2 sm:mb-4 gap-1">
+              <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-orange-600/10 flex items-center justify-center text-orange-500 text-sm sm:text-xl border border-orange-500/20 shadow-lg shadow-orange-500/5 group-hover:scale-110 transition-transform flex-shrink-0">
                 <i className="fas fa-bolt"></i>
               </div>
-              <span className="text-[10px] font-bold text-orange-400 tracking-widest bg-orange-500/10 px-2 py-1 rounded-lg">Weighted</span>
+              <span className="text-[8px] sm:text-[10px] font-bold text-orange-400 tracking-wider sm:tracking-widest bg-orange-500/10 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg">Weighted</span>
             </div>
-            <p className="text-3xl font-bold text-white tracking-normal font-display">{avgSev}</p>
-            <p className="text-[10px] font-bold text-gray-500 tracking-[0.2em] mt-1">Avg Severity Level</p>
+            <p className="text-xl sm:text-3xl font-bold text-white tracking-normal font-display">{avgSev}</p>
+            <p className="text-[8px] sm:text-[10px] font-bold text-gray-500 tracking-wider sm:tracking-[0.2em] mt-1">Avg Severity</p>
           </div>
 
-          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-6 rounded-[1.5rem] hover:border-blue-500/30 transition-all shadow-xl group">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-purple-600/10 flex items-center justify-center text-purple-500 text-xl border border-purple-500/20 shadow-lg shadow-purple-500/5 group-hover:scale-110 transition-transform">
+          <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-3 sm:p-6 rounded-xl sm:rounded-[1.5rem] hover:border-blue-500/30 transition-all shadow-xl group">
+            <div className="flex items-center justify-between mb-2 sm:mb-4 gap-1">
+              <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-purple-600/10 flex items-center justify-center text-purple-500 text-sm sm:text-xl border border-purple-500/20 shadow-lg shadow-purple-500/5 group-hover:scale-110 transition-transform flex-shrink-0">
                 <i className="fas fa-star"></i>
               </div>
-              <span className="text-[10px] font-bold text-purple-400 tracking-widest bg-purple-500/10 px-2 py-1 rounded-lg">Hotspot</span>
+              <span className="text-[8px] sm:text-[10px] font-bold text-purple-400 tracking-wider sm:tracking-widest bg-purple-500/10 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg">Hotspot</span>
             </div>
-            <p className="text-3xl font-bold text-white tracking-normal font-display">{topIssue}</p>
-            <p className="text-[10px] font-bold text-gray-500 tracking-[0.2em] mt-1">Primary Network Issue</p>
+            <p className="text-lg sm:text-3xl font-bold text-white tracking-normal font-display truncate">{topIssue}</p>
+            <p className="text-[8px] sm:text-[10px] font-bold text-gray-500 tracking-wider sm:tracking-[0.2em] mt-1">Primary Issue</p>
           </div>
         </div>
 
         {/* Filters and Search */}
-        <div className="flex flex-wrap items-center justify-between gap-6 bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-6 rounded-2xl">
-          <div className="flex flex-wrap items-center gap-4">
-            <h4 className="text-[10px] font-bold text-gray-500 tracking-widest mr-2">Filter Matrix:</h4>
+        <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 p-4 sm:p-6 rounded-2xl space-y-4">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4">
+            <h4 className="text-[10px] font-bold text-gray-500 tracking-widest">Filter Matrix:</h4>
+            <div className="flex flex-wrap gap-2 sm:gap-3">
+              <select value={timeRange} onChange={e => { setTimeRange(e.target.value); setCurrentPage(1); }} className="bg-[#020617] border border-gray-800 rounded-xl px-2 py-2 text-[10px] font-bold tracking-wider text-white focus:outline-none focus:border-blue-500/50 transition-all cursor-pointer flex-1 sm:flex-none min-w-0">
+                <option value="24h">24H</option>
+                <option value="3d">72H</option>
+                <option value="7d">7 Days</option>
+                <option value="30d">30 Days</option>
+              </select>
 
-            <select value={timeRange} onChange={e => { setTimeRange(e.target.value); setCurrentPage(1); }} className="bg-[#020617] border border-gray-800 rounded-xl px-4 py-2 text-[10px] font-bold tracking-widest text-white focus:outline-none focus:border-blue-500/50 transition-all cursor-pointer">
-              <option value="24h">Chronology: 24H</option>
-              <option value="3d">Chronology: 72H</option>
-              <option value="7d">Chronology: 168H</option>
-              <option value="30d">Chronology: 720H</option>
-            </select>
+              <select value={filterCategory} onChange={e => { setFilterCategory(e.target.value); setCurrentPage(1); }} className="bg-[#020617] border border-gray-800 rounded-xl px-2 py-2 text-[10px] font-bold tracking-wider text-white focus:outline-none focus:border-blue-500/50 transition-all cursor-pointer flex-1 sm:flex-none min-w-0">
+                <option value="All">All Categories</option>
+                {ALL_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
 
-            <select value={filterCategory} onChange={e => { setFilterCategory(e.target.value); setCurrentPage(1); }} className="bg-[#020617] border border-gray-800 rounded-xl px-4 py-2 text-[10px] font-bold tracking-widest text-white focus:outline-none focus:border-blue-500/50 transition-all cursor-pointer">
-              <option value="All">Scope: Universal</option>
-              {ALL_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+              <select value={filterLine} onChange={e => { setFilterLine(e.target.value); setCurrentPage(1); }} className="bg-[#020617] border border-gray-800 rounded-xl px-2 py-2 text-[10px] font-bold tracking-wider text-white focus:outline-none focus:border-blue-500/50 transition-all cursor-pointer flex-1 sm:flex-none min-w-0">
+                <option value="All">All Lines</option>
+                {LINES.map(l => <option key={l} value={l}>{l}</option>)}
+              </select>
 
-            <select value={filterLine} onChange={e => { setFilterLine(e.target.value); setCurrentPage(1); }} className="bg-[#020617] border border-gray-800 rounded-xl px-4 py-2 text-[10px] font-bold tracking-widest text-white focus:outline-none focus:border-blue-500/50 transition-all cursor-pointer">
-              <option value="All">Vector: All Lines</option>
-              {LINES.map(l => <option key={l} value={l}>{l}</option>)}
-            </select>
-
-            <select value={filterSentiment} onChange={e => { setFilterSentiment(e.target.value); setCurrentPage(1); }} className="bg-[#020617] border border-gray-800 rounded-xl px-4 py-2 text-[10px] font-bold tracking-widest text-white focus:outline-none focus:border-blue-500/50 transition-all cursor-pointer">
-              <option value="All">Polarity: All</option>
-              {SENTIMENTS.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
+              <select value={filterSentiment} onChange={e => { setFilterSentiment(e.target.value); setCurrentPage(1); }} className="bg-[#020617] border border-gray-800 rounded-xl px-2 py-2 text-[10px] font-bold tracking-wider text-white focus:outline-none focus:border-blue-500/50 transition-all cursor-pointer flex-1 sm:flex-none min-w-0">
+                <option value="All">All Polarity</option>
+                {SENTIMENTS.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
           </div>
-          <div className="relative group w-full md:w-80">
+          <div className="relative group">
             <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 group-focus-within:text-blue-500 transition-colors"></i>
             <input
               type="text"
-              placeholder="Search intelligence logs..."
+              placeholder="Search logs..."
               value={searchQuery}
               onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-              className="w-full pl-11 pr-4 py-3 bg-[#020617] border border-gray-800 rounded-2xl text-[10px] font-bold tracking-widest text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-all"
+              className="w-full pl-11 pr-4 py-2.5 sm:py-3 bg-[#020617] border border-gray-800 rounded-xl sm:rounded-2xl text-[10px] font-bold tracking-widest text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 transition-all"
             />
           </div>
         </div>
@@ -432,7 +439,7 @@ export default function AdminDashboard({ onClose, user, onLogout }) {
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" horizontal={false} />
                 <XAxis type="number" hide />
                 <YAxis dataKey="name" type="category" width={85} tick={{ fill: '#94a3b8', fontSize: 9, fontWeight: 'bold' }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', padding: '10px' }} itemStyle={{ color: '#fff', fontSize: '10px', fontWeight: 'bold' }} />
+                <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', padding: '10px' }} itemStyle={{ color: '#ffffffff', fontSize: '10px', fontWeight: 'bold' }} labelStyle={{ color: '#ffffffff', fontWeight: 'bold', fontSize: '11px' }} cursor={{ fill: 'transparent' }} />
                 <Bar dataKey="value" fill="#3b82f6" radius={[0, 10, 10, 0]} barSize={12} />
               </BarChart>
             </ResponsiveContainer>
@@ -447,7 +454,7 @@ export default function AdminDashboard({ onClose, user, onLogout }) {
                 <Pie data={sentimentData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={6} dataKey="value" stroke="none">
                   {sentimentData.map(e => <Cell key={e.name} fill={SC[e.name]} />)}
                 </Pie>
-                <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', padding: '10px' }} />
+                <Tooltip contentStyle={{ backgroundColor: '#e3e5ebff', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', padding: '10px' }} />
                 <Legend iconType="circle" wrapperStyle={{ fontSize: '9px', fontWeight: 'bold', paddingTop: '10px' }} />
               </PieChart>
             </ResponsiveContainer>
@@ -460,9 +467,9 @@ export default function AdminDashboard({ onClose, user, onLogout }) {
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={lineData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-                <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 8, fontWeight: 'bold' }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="name" tick={{ fill: '#e2e8f0', fontSize: 9, fontWeight: 'bold' }} axisLine={false} tickLine={false} angle={-35} textAnchor="end" height={40} interval={0} />
                 <YAxis hide />
-                <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', padding: '10px' }} />
+                <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', padding: '10px' }} itemStyle={{ color: '#ffffffff', fontSize: '10px', fontWeight: 'bold' }} labelStyle={{ color: '#ffffffff', fontWeight: 'bold', fontSize: '11px' }} cursor={{ fill: 'transparent' }} />
                 <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={15}>
                   {lineData.map((e, i) => <Cell key={i} fill={e.fill} />)}
                 </Bar>
@@ -520,11 +527,11 @@ export default function AdminDashboard({ onClose, user, onLogout }) {
 
         {/* Feedback Inventory */}
         <div className="bg-[#0f172a]/40 backdrop-blur-sm border border-white/5 rounded-[2rem] overflow-hidden shadow-2xl">
-          <div className="px-8 py-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+          <div className="px-4 sm:px-8 py-4 sm:py-6 border-b border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/[0.02]">
             <h3 className="text-[10px] font-bold text-white tracking-[0.25em]">Intelligence Inventory</h3>
-            <div className="flex items-center gap-4 text-[10px] font-bold tracking-widest text-gray-500">
-              Entry Cluster: <span className="text-blue-500">{currentPage}</span> / <span className="text-blue-500">{totalPages || 1}</span>
-              <div className="flex items-center gap-2 ml-4">
+            <div className="flex items-center gap-3 sm:gap-4 text-[10px] font-bold tracking-widest text-gray-500">
+              <span className="text-blue-500">{currentPage}</span> / <span className="text-blue-500">{totalPages || 1}</span>
+              <div className="flex items-center gap-2">
                 <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="w-8 h-8 flex items-center justify-center bg-[#020617] text-white rounded-lg border border-white/10 hover:border-blue-500/50 disabled:opacity-20 transition-all cursor-pointer shadow-lg active:scale-95">
                   <i className="fas fa-chevron-left"></i>
                 </button>
@@ -538,35 +545,35 @@ export default function AdminDashboard({ onClose, user, onLogout }) {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-black/20 text-[10px] font-bold text-gray-500 tracking-widest border-b border-white/5">
-                  <th className="px-8 py-5">Temporal Vector</th>
-                  <th className="px-8 py-5">Network Node</th>
-                  <th className="px-8 py-5">Intelligence Log</th>
-                  <th className="px-8 py-5 text-right">Polarity & Impact</th>
+                  <th className="px-4 sm:px-8 py-4 sm:py-5">Time</th>
+                  <th className="px-4 sm:px-8 py-4 sm:py-5">Station</th>
+                  <th className="px-4 sm:px-8 py-4 sm:py-5 hidden sm:table-cell">Log</th>
+                  <th className="px-4 sm:px-8 py-4 sm:py-5 text-right">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/[0.03]">
                 {paginated.map(f => (
                   <tr key={f.id} className="hover:bg-white/[0.02] transition-colors group">
-                    <td className="px-8 py-6 whitespace-nowrap">
+                    <td className="px-4 sm:px-8 py-4 sm:py-6 whitespace-nowrap">
                       <p className="text-[10px] font-bold text-white tracking-normal">{f.timestamp.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</p>
                       <p className="text-[10px] font-bold text-gray-500 tracking-widest mt-0.5">{f.timestamp.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}</p>
                     </td>
-                    <td className="px-8 py-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-1.5 h-8 rounded-full shadow-sm" style={{ backgroundColor: LINE_COLORS[f.line] }}></div>
-                        <div>
-                          <p className="text-sm font-bold text-white tracking-wide">{f.station}</p>
-                          <p className="text-[10px] font-bold tracking-widest" style={{ color: LINE_COLORS[f.line] }}>{f.line.replace(' Line', '')}</p>
+                    <td className="px-4 sm:px-8 py-4 sm:py-6">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="w-1.5 h-6 sm:h-8 rounded-full shadow-sm" style={{ backgroundColor: LINE_COLORS[f.line] }}></div>
+                        <div className="min-w-0">
+                          <p className="text-xs sm:text-sm font-bold text-white tracking-wide truncate">{f.station}</p>
+                          <p className="text-[9px] sm:text-[10px] font-bold tracking-widest" style={{ color: LINE_COLORS[f.line] }}>{f.line.replace(' Line', '')}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-6">
+                    <td className="px-4 sm:px-8 py-4 sm:py-6 hidden sm:table-cell">
                       <div className="max-w-md">
                         <span className="text-[9px] font-bold text-blue-500 tracking-widest bg-blue-500/10 px-2 py-0.5 rounded-full border border-blue-500/20 mb-2 inline-block">{f.category}</span>
-                        <p className="text-sm text-gray-300 leading-relaxed font-medium">"{f.message}"</p>
+                        <p className="text-sm text-gray-300 leading-relaxed font-medium truncate max-w-[300px]">"{f.message}"</p>
                       </div>
                     </td>
-                    <td className="px-8 py-6">
+                    <td className="px-4 sm:px-8 py-4 sm:py-6">
                       <div className="flex flex-col items-end gap-2">
                         <div className="flex items-center gap-2">
                           <span className="text-lg leading-none">
@@ -595,6 +602,32 @@ export default function AdminDashboard({ onClose, user, onLogout }) {
             </div>
           )}
         </div>
+
+        {/* Dashboard Footer */}
+        <footer className="mt-8 border-t border-white/5 pt-8 pb-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                <i className="fas fa-subway text-white text-sm"></i>
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-gray-200">Delhi Route Optimizer</h3>
+                <p className="text-[10px] text-gray-500">Smart Commute Planning</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 text-gray-500">
+              {['twitter', 'facebook', 'instagram', 'linkedin'].map((icon) => (
+                <a key={icon} href="#" className="hover:text-blue-400 transition hover:drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]">
+                  <i className={`fab fa-${icon}`}></i>
+                </a>
+              ))}
+            </div>
+          </div>
+          <div className="mt-6 text-center text-[10px] text-gray-600">
+            <p>© 2026 Delhi Route Optimizer • Data provided by DMRC & DTC</p>
+            <p className="mt-1">Demonstration project for route optimization concepts.</p>
+          </div>
+        </footer>
       </div>
     </div>
   );

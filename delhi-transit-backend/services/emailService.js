@@ -1,7 +1,6 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 // For development, we'll use a mock transport or log to console
-// In production, these should be in .env
 const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST || 'smtp.ethereal.email',
     port: process.env.EMAIL_PORT || 587,
@@ -11,7 +10,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-const sendWelcomeEmail = async (email) => {
+export const sendWelcomeEmail = async (email) => {
     const mailOptions = {
         from: '"Delhi Route Optimizer" <noreply@delhirouteoptimizer.com>',
         to: email,
@@ -57,5 +56,3 @@ The Delhi Route Optimizer Team`,
         return { success: false, error: error.message };
     }
 };
-
-module.exports = { sendWelcomeEmail };

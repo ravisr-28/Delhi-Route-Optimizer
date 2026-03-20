@@ -1,10 +1,10 @@
-const express = require('express');
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
+import express from 'express';
+import passport from 'passport';
+import jwt from 'jsonwebtoken';
+
 const router = express.Router();
 
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
-const FALLBACK_CLIENT_URL = 'https://route-optimizer-frontend.vercel.app'; // Update with actual production URL if known
 
 // Helper: generate JWT and send it to the frontend via postMessage
 function handleOAuthCallback(req, res) {
@@ -22,7 +22,7 @@ function handleOAuthCallback(req, res) {
             role: req.user.role,
             name: req.user.name
         },
-        process.env.JWT_SECRET || 'your-secret-key',
+        process.env.JWT_SECRET,
         { expiresIn: '7d' }
     );
 
@@ -98,8 +98,7 @@ function getCallbackHTML(token, error, user) {
                 console.log("Checking for opener...");
                 if (!window.opener) {
                     console.log("No opener found - redirecting to app with token fallback");
-                    // Try to use CLIENT_URL, then FALLBACK, then origin as last resort
-                    const targetUrl = clientUrl || FALLBACK_CLIENT_URL || window.location.origin;
+                    const targetUrl = clientUrl;
                     
                     if (token) {
                         window.location.href = targetUrl + '/?token=' + encodeURIComponent(token) + '&isPopup=true';
@@ -112,13 +111,12 @@ function getCallbackHTML(token, error, user) {
                 try {
                     console.log("Opener found. Sending message...");
                     if (token) {
-                        // Send success message to parent window
-                        // Use wildcard '*' temporarily if standard origin fails, or just use CLIENT_URL
+                        // Send success message to parent window using CLIENT_URL as target origin
                         window.opener.postMessage({
                             type: 'OAUTH_SUCCESS',
                             token: token,
                             user: user
-                        }, '*'); // Using '*' to ensure delivery during local dev port mismatches
+                        }, clientUrl);
                         
                         console.log("✅ Sent OAUTH_SUCCESS to parent");
                     } else {
@@ -126,7 +124,7 @@ function getCallbackHTML(token, error, user) {
                         window.opener.postMessage({
                             type: 'OAUTH_ERROR',
                             error: error || 'Authentication failed'
-                        }, '*');
+                        }, clientUrl);
                         
                         console.log("❌ Sent OAUTH_ERROR to parent");
                     }
@@ -216,4 +214,4 @@ router.get('/failure', (req, res) => {
     res.send(getCallbackHTML(null, 'Authentication failed. Please try again.'));
 });
 
-module.exports = router;
+export default router;

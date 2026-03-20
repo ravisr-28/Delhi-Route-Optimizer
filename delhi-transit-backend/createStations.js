@@ -1,8 +1,9 @@
 // createStations.js - Run this once to create stations from your routes
-const mongoose = require('mongoose');
-const Route = require('./models/Route');
-const Station = require('./models/Station');
-const { connectDatabase } = require('./config/database');
+import 'dotenv/config';
+import mongoose from 'mongoose';
+import Route from './models/Route.js';
+import Station from './models/Station.js';
+import connectDatabase from './config/database.js';
 
 const createStationsFromRoutes = async () => {
   try {

@@ -1,11 +1,11 @@
-const express = require('express');
-const { 
-  getAllRoutes, 
-  getRouteById, 
+import express from 'express';
+import {
+  getAllRoutes,
+  getRouteById,
   getRoutesByType,
   getNearbyRoutes,
-  searchRoutes 
-} = require('../controllers/routeController');
+  searchRoutes
+} from '../controllers/routeController.js';
 
 const router = express.Router();
 
@@ -15,4 +15,4 @@ router.get('/nearby', getNearbyRoutes);
 router.get('/type/:type', getRoutesByType);
 router.get('/:id', getRouteById);
 
-module.exports = router;
+export default router;

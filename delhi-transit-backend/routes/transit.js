@@ -1,11 +1,12 @@
 // routes/transit.js
-const express = require('express');
+import express from 'express';
+import RouteFinder from '../services/routeFinder.js';
+import Report from '../models/Report.js';
+import Station from '../models/Station.js';
+import Route from '../models/Route.js';
+import { authenticateUser, authenticateAdmin, optionalAuth } from '../middleware/auth.js';
+
 const router = express.Router();
-const RouteFinder = require('../services/routeFinder');
-const Report = require('../models/Report');
-const Station = require('../models/Station');
-const Route = require('../models/Route');
-const { authenticateUser, authenticateAdmin, optionalAuth } = require('../middleware/auth');
 
 // ============================================
 // ROUTE SEARCH ENDPOINTS
@@ -446,4 +447,4 @@ router.get('/stats', authenticateAdmin, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

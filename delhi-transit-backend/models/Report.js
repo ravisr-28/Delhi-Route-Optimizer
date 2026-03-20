@@ -1,5 +1,5 @@
 // models/Report.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const reportSchema = new mongoose.Schema({
   type: {
@@ -110,12 +110,12 @@ reportSchema.virtual('age').get(function() {
   const now = new Date();
   const diffMs = now - this.createdAt;
   const diffMins = Math.floor(diffMs / 60000);
-  
+
   if (diffMins < 60) return `${diffMins}m ago`;
-  
+
   const diffHours = Math.floor(diffMins / 60);
   if (diffHours < 24) return `${diffHours}h ago`;
-  
+
   const diffDays = Math.floor(diffHours / 24);
   return `${diffDays}d ago`;
 });
@@ -193,7 +193,7 @@ reportSchema.statics.getStatistics = async function() {
 
 reportSchema.statics.getTrendingReports = async function(limit = 10) {
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  
+
   return await this.find({
     status: 'active',
     isPublic: true,
@@ -220,4 +220,4 @@ reportSchema.pre('save', function(next) {
 reportSchema.set('toJSON', { virtuals: true });
 reportSchema.set('toObject', { virtuals: true });
 
-module.exports = mongoose.model('Report', reportSchema);
+export default mongoose.model('Report', reportSchema);

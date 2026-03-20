@@ -198,10 +198,17 @@ function App() {
   if (showAdmin) {
     if (!isAuthenticated) {
       return (
-        <div className="min-h-screen bg-[#0b0f19] flex items-center justify-center p-6">
-          <div className="w-full max-w-md">
-            <AdminLogin onBack={() => setShowAdmin(false)} />
+        <div className="min-h-screen bg-[#020617]">
+          <div className="fixed top-4 left-4 z-50">
+            <button
+              onClick={() => setShowAdmin(false)}
+              className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors group cursor-pointer"
+            >
+              <i className="fas fa-arrow-left text-xs group-hover:-translate-x-1 transition-transform"></i>
+              Back to Home
+            </button>
           </div>
+          <AdminLogin />
         </div>
       );
     }
@@ -264,7 +271,7 @@ function App() {
         setFrom={setFrom}
         setTo={setTo}
         setTime={setTime}
-        onFindRoute={(opts) => requireAuth(findRoute, undefined, undefined, opts)}
+        onFindRoute={(opts) => findRoute(undefined, undefined, opts)}
         loading={loading}
         searchError={searchError}
       />
@@ -282,7 +289,7 @@ function App() {
                   {searchedRoute.from.name} → {searchedRoute.to.name}
                 </p>
               </div>
-              <div className="flex gap-6">
+              <div className="flex flex-wrap gap-4 sm:gap-6">
 
                 {/* Place proximity cards */}
                 {(placeInfo.from || placeInfo.to) && (
@@ -394,7 +401,7 @@ function App() {
                       </span>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {/* Metro card */}
                     <div className={`rounded-lg p-3 border relative overflow-hidden ${!metroOpen ? 'border-red-500/30 bg-red-500/5 opacity-75' :
                       fasterMode === 'metro' ? 'border-green-500/50 bg-green-500/10' : 'border-white/10 bg-white/[0.03]'
@@ -520,7 +527,7 @@ function App() {
                 </h4>
                 {(() => {
                   const tp = getTimePeriod();
-                  const isPeak = tp.label.includes('Rush');
+                  const isPeak = tp.label.includes('Peak');
                   return (
                     <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${isPeak ? 'bg-red-500/10 text-red-300 border border-red-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                       }`}>
@@ -680,26 +687,19 @@ function App() {
         </div>
       )}
 
-      {/* Login Modal — shown when unauthenticated user tries an action */}
+      {/* Login Full Page — shown when unauthenticated user tries an action */}
       {showLoginModal && (
-        <div className="fixed inset-0 z-[100] overflow-y-auto bg-black/70 backdrop-blur-sm">
-          <div className="flex min-h-full items-center justify-center py-8 px-4">
-            <div className="relative w-full max-w-md">
-              <button
-                onClick={() => setShowLoginModal(false)}
-                className="absolute -top-3 -right-3 z-10 w-8 h-8 rounded-full bg-gray-800 border border-gray-700
-                           text-gray-300 hover:text-white hover:bg-gray-700 transition flex items-center justify-center text-lg"
-              >
-                ×
-              </button>
-              <div className="bg-[#0f172a] border border-gray-700 rounded-2xl p-2 shadow-2xl shadow-blue-500/10">
-                <div className="text-center py-3">
-                  <p className="text-sm text-gray-400">Please log in to use this feature</p>
-                </div>
-                <AdminLogin onBack={() => setShowLoginModal(false)} />
-              </div>
-            </div>
+        <div className="fixed inset-0 z-[100] overflow-y-auto bg-[#020617]">
+          <div className="fixed top-4 left-4 z-50">
+            <button
+              onClick={() => setShowLoginModal(false)}
+              className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors group cursor-pointer"
+            >
+              <i className="fas fa-arrow-left text-xs group-hover:-translate-x-1 transition-transform"></i>
+              Back to Home
+            </button>
           </div>
+          <AdminLogin />
         </div>
       )}
 

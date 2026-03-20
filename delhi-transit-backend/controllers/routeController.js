@@ -1,6 +1,6 @@
-const Route = require('../models/Route');
+import Route from '../models/Route.js';
 
-exports.getAllRoutes = async (req, res) => {
+export const getAllRoutes = async (req, res) => {
   try {
     const { type, isActive } = req.query;
     const filter = {};
@@ -24,7 +24,7 @@ exports.getAllRoutes = async (req, res) => {
   }
 };
 
-exports.getRouteById = async (req, res) => {
+export const getRouteById = async (req, res) => {
   try {
     const route = await Route.findById(req.params.id);
 
@@ -48,7 +48,7 @@ exports.getRouteById = async (req, res) => {
   }
 };
 
-exports.getRoutesByType = async (req, res) => {
+export const getRoutesByType = async (req, res) => {
   try {
     const { type } = req.params;
 
@@ -76,7 +76,7 @@ exports.getRoutesByType = async (req, res) => {
   }
 };
 
-exports.getNearbyRoutes = async (req, res) => {
+export const getNearbyRoutes = async (req, res) => {
   try {
     const { lat, lng, radius = 3000 } = req.query;
 
@@ -92,8 +92,6 @@ exports.getNearbyRoutes = async (req, res) => {
     const radiusNum = parseInt(radius);
 
     // Convert radius (meters) to approximate degrees
-    // 1 degree latitude ≈ 111,320 meters
-    // 1 degree longitude ≈ 111,320 * cos(latitude) meters
     const latDelta = radiusNum / 111320;
     const lngDelta = radiusNum / (111320 * Math.cos(latNum * Math.PI / 180));
 
@@ -122,7 +120,7 @@ exports.getNearbyRoutes = async (req, res) => {
   }
 };
 
-exports.searchRoutes = async (req, res) => {
+export const searchRoutes = async (req, res) => {
   try {
     const { q } = req.query;
 

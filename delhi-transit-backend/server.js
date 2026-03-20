@@ -1,22 +1,26 @@
-const dotenv = require('dotenv');
-dotenv.config();
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import connectDatabase from './config/database.js';
+import passport from './config/passport.js';
+import authRoutes from './routes/auth.js';
+import oauthRoutes from './routes/oauth.js';
+import routeRoutes from './routes/routes.js';
+import transitRoutes from './routes/transit.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import stationRoutes from './routes/stations.js';
+import newsletterRoutes from './routes/newsletter.js';
 
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const connectDatabase = require('./config/database');
-const passport = require('./config/passport');
-const authRoutes = require('./routes/auth');
-const oauthRoutes = require('./routes/oauth');
-const routeRoutes = require('./routes/routes');
-const transitRoutes = require('./routes/transit');
-const { errorHandler } = require('./middleware/errorHandler');
-const stationRoutes = require('./routes/stations');
-const newsletterRoutes = require('./routes/newsletter');
+// Fail fast if JWT_SECRET is not set
+if (!process.env.JWT_SECRET) {
+  console.error('❌ FATAL: JWT_SECRET environment variable is not set. Server cannot start.');
+  process.exit(1);
+}
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 // Trust first proxy (Render/Vercel)
 app.set('trust proxy', 1);
@@ -27,9 +31,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// CORS configuration - IMPORTANT for OAuth
+// CORS configuration
 app.use(cors({
   origin: [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    process.env.CLIENT_URL,
     'https://route-optimizer-teal.vercel.app'
   ].filter(Boolean),
   credentials: true,
@@ -46,10 +53,10 @@ app.use(helmet({
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://use.fontawesome.com"],
       imgSrc: ["'self'", "data:", "https:", "http:"],
       connectSrc: [
-        "'self'", 
-        "http://localhost:5173", 
-        "http://localhost:5000", 
-        process.env.CLIENT_URL, 
+        "'self'",
+        "http://localhost:5173",
+        "http://localhost:3000",
+        process.env.CLIENT_URL,
         process.env.SERVER_URL
       ].filter(Boolean),
     },
@@ -103,7 +110,6 @@ const startServer = async () => {
       console.log(`🔑 OAuth endpoints:`);
       console.log(`   - Google: http://localhost:${PORT}/api/oauth/google`);
       console.log(`   - GitHub: http://localhost:${PORT}/api/oauth/github`);
-      console.log(`   - Microsoft: http://localhost:${PORT}/api/oauth/microsoft`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);

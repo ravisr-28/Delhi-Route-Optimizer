@@ -24,14 +24,16 @@ export function AuthProvider({ children }) {
     syncAuth();
 
     // Listen for storage changes (for cross-tab sync)
-    window.addEventListener('storage', (e) => {
+    const handleStorageChange = (e) => {
       if (e.key === 'delhi_transit_admin_token') {
         console.log("Auth token changed in another tab, syncing...");
         syncAuth();
       }
-    });
+    };
 
-    return () => window.removeEventListener('storage', syncAuth);
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   // Normal login
@@ -47,7 +49,7 @@ export function AuthProvider({ children }) {
     return { success: false, error: result.error };
   };
 
-  // ⭐ OAuth login using token - IMPROVED VERSION
+  // ⭐ OAuth login using token
   const loginWithToken = (token) => {
     try {
       // Save token to localStorage

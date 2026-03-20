@@ -1,14 +1,15 @@
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const GitHubStrategy = require('passport-github2').Strategy;
-const User = require('../models/User');
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { Strategy as GitHubStrategy } from 'passport-github2';
+import crypto from 'crypto';
+import User from '../models/User.js';
 
 // ─── Google OAuth ────────────────────────────────────────
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
     passport.use(new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: `${process.env.SERVER_URL || 'http://localhost:5000'}/api/oauth/google/callback`,
+        callbackURL: `${process.env.SERVER_URL || 'http://localhost:3000'}/api/oauth/google/callback`,
     }, async (accessToken, refreshToken, profile, done) => {
         try {
             const user = await findOrCreateOAuthUser(profile, 'google');
@@ -24,7 +25,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
     passport.use(new GitHubStrategy({
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL: `${process.env.SERVER_URL || 'http://localhost:5000'}/api/oauth/github/callback`,
+        callbackURL: `${process.env.SERVER_URL || 'http://localhost:3000'}/api/oauth/github/callback`,
         scope: ['user:email'],
     }, async (accessToken, refreshToken, profile, done) => {
         try {
@@ -47,7 +48,7 @@ async function findOrCreateOAuthUser(profile, provider) {
 
     if (!user) {
         // Create new user with a random password (they'll use OAuth to log in)
-        const randomPass = require('crypto').randomBytes(32).toString('hex');
+        const randomPass = crypto.randomBytes(32).toString('hex');
         user = await User.create({
             name,
             email,
@@ -75,4 +76,4 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-module.exports = passport;
+export default passport;

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { searchAll } from "../utils/routeSearch";
+import metroMapBg from "../assets/routes/delhi-metro-map.jpg";
 
 const CATEGORY_ICONS = {
   station: 'fas fa-subway',
@@ -85,16 +86,24 @@ export default function Hero({
   return (
     <section
       id="home"
-      className="bg-gradient-to-b from-[#020617] via-[#020617] to-[#020617] py-20"
+      className="relative py-20 overflow-hidden"
     >
-      <div className="container mx-auto px-4">
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${metroMapBg})` }}
+      ></div>
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-[#020617]/85 backdrop-blur-[2px]"></div>
+
+      <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-5xl mx-auto text-center">
           {/* Heading */}
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 sm:mb-6">
             Smart Route Planning for Delhi Commuters
           </h2>
 
-          <p className="text-lg text-gray-400 mb-10">
+          <p className="text-base sm:text-lg text-gray-400 mb-8 sm:mb-10">
             Find the fastest, cheapest, and most convenient routes combining
             Delhi Metro and DTC buses
           </p>
@@ -172,9 +181,9 @@ export default function Hero({
             </div>
 
             {/* Options + Button */}
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6">
               {/* Checkboxes */}
-              <div className="flex gap-6 text-gray-300 text-sm">
+              <div className="flex flex-wrap gap-4 sm:gap-6 text-gray-300 text-sm">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -211,7 +220,7 @@ export default function Hero({
                 onClick={() => onFindRoute({ fastest, cheapest, lessWalking })}
                 disabled={loading}
                 className="flex items-center justify-center gap-2
-                           px-8 py-3 rounded-xl font-medium text-white
+                            px-8 py-3 rounded-xl font-medium text-white w-full sm:w-auto
                            bg-blue-600 hover:bg-blue-500 transition
                            disabled:opacity-60
                            shadow-[0_0_20px_rgba(59,130,246,0.6)]"

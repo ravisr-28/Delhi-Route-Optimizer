@@ -1,6 +1,6 @@
 // models/User.js
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -71,16 +71,13 @@ const userSchema = new mongoose.Schema({
 });
 
 // Indexes
-// userSchema.index({ email: 1 });
 userSchema.index({ role: 1 });
 
-// Hash password before saving - NO CALLBACK VERSION
+// Hash password before saving
 userSchema.pre('save', async function() {
-  // Only hash if password is modified
   if (!this.isModified('password')) {
     return;
   }
-  
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
@@ -90,9 +87,8 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Update last login - FIXED to avoid infinite loop
+// Update last login
 userSchema.methods.updateLastLogin = async function() {
-  // Use updateOne to avoid triggering save hooks
   await this.constructor.updateOne(
     { _id: this._id },
     { $set: { lastLogin: new Date() } }
@@ -106,4 +102,4 @@ userSchema.methods.toJSON = function() {
   return user;
 };
 
-module.exports = mongoose.models.User || mongoose.model('User', userSchema);
+export default mongoose.models.User || mongoose.model('User', userSchema);

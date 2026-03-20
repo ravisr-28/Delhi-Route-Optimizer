@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { MapContainer, TileLayer, Polyline, Marker, Popup, ZoomControl, CircleMarker } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -428,7 +428,7 @@ const MetroMap = ({
       {mapOpen && (
         <div className="relative">
           {/* DMRC-style Plan Your Journey Overlay */}
-          <div className="absolute top-4 left-4 z-[1000] w-72 md:w-80 pointer-events-auto">
+          <div className="absolute top-2 left-2 right-2 md:right-auto z-[1000] md:w-80 pointer-events-auto">
             <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-blue-100 overflow-hidden">
               {/* Overlay Header */}
               <div
@@ -562,7 +562,7 @@ const MetroMap = ({
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow overflow-hidden h-[600px] z-0">
+          <div className="bg-white rounded-lg shadow overflow-hidden h-[400px] sm:h-[500px] md:h-[600px] z-0">
             <MapContainer
               center={mapCenter}
               zoom={zoomLevel}
@@ -577,7 +577,7 @@ const MetroMap = ({
               />
 
               {/* DMRC-style Plan Your Journey Overlay */}
-              <div className="absolute top-4 left-4 z-[1000] w-72 md:w-80 pointer-events-auto">
+              <div className="absolute top-2 left-2 right-2 md:right-auto z-[1000] md:w-80 pointer-events-auto">
                 <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-blue-100 overflow-hidden">
                   {/* Overlay Header */}
                   <div

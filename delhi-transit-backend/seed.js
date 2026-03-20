@@ -1,9 +1,7 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const Route = require('./models/Route');
-const { connectDatabase } = require('./config/database');
-
-dotenv.config();
+import 'dotenv/config';
+import mongoose from 'mongoose';
+import Route from './models/Route.js';
+import connectDatabase from './config/database.js';
 
 const sampleRoutes = [
   {
@@ -132,16 +130,16 @@ const sampleRoutes = [
 const seedDatabase = async () => {
   try {
     await connectDatabase();
-    
+
     console.log('🗑️  Clearing existing routes...');
     await Route.deleteMany({});
-    
+
     console.log('📦 Seeding database with sample routes...');
     await Route.insertMany(sampleRoutes);
-    
+
     console.log('✅ Database seeded successfully!');
     console.log(`📊 Added ${sampleRoutes.length} routes`);
-    
+
     process.exit(0);
   } catch (error) {
     console.error('❌ Error seeding database:', error);

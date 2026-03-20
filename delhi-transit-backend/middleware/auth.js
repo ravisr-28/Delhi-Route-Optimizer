@@ -1,11 +1,11 @@
 // middleware/auth.js
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
 /**
  * Authenticate user using JWT token
  */
-const authenticateUser = async (req, res, next) => {
+export const authenticateUser = async (req, res, next) => {
   try {
     // Get token from header
     const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -18,7 +18,7 @@ const authenticateUser = async (req, res, next) => {
     }
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Find user (don't select password field)
     const user = await User.findById(decoded.userId);
@@ -63,7 +63,7 @@ const authenticateUser = async (req, res, next) => {
 /**
  * Authenticate admin user
  */
-const authenticateAdmin = async (req, res, next) => {
+export const authenticateAdmin = async (req, res, next) => {
   // First authenticate as regular user
   authenticateUser(req, res, (err) => {
     if (err) {
@@ -88,14 +88,14 @@ const authenticateAdmin = async (req, res, next) => {
 /**
  * Optional authentication - doesn't fail if no token
  */
-const optionalAuth = async (req, res, next) => {
+export const optionalAuth = async (req, res, next) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
 
     if (token) {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const user = await User.findById(decoded.userId);
-      
+
       if (user && user.isActive) {
         req.user = user;
       }
@@ -111,7 +111,7 @@ const optionalAuth = async (req, res, next) => {
 /**
  * Check if user has specific role
  */
-const hasRole = (...roles) => {
+export const hasRole = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({
@@ -129,11 +129,4 @@ const hasRole = (...roles) => {
 
     next();
   };
-};
-
-module.exports = {
-  authenticateUser,
-  authenticateAdmin,
-  optionalAuth,
-  hasRole
 };

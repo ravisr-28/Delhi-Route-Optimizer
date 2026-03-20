@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const routeSchema = new mongoose.Schema({
   routeNumber: {
@@ -97,4 +97,4 @@ const routeSchema = new mongoose.Schema({
 
 routeSchema.index({ type: 1, isActive: 1 });
 
-module.exports = mongoose.model('Route', routeSchema);
+export default mongoose.model('Route', routeSchema);

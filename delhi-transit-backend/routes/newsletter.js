@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import Subscriber from '../models/Subscriber.js';
+import { sendWelcomeEmail } from '../services/emailService.js';
+
 const router = express.Router();
-const Subscriber = require('../models/Subscriber');
-const { sendWelcomeEmail } = require('../services/emailService');
 
 // @route   POST /api/newsletter/subscribe
 // @desc    Subscribe to newsletter
@@ -47,4 +48,4 @@ router.post('/subscribe', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

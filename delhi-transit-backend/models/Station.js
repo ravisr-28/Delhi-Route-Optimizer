@@ -1,5 +1,5 @@
 // models/Station.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const stationSchema = new mongoose.Schema({
   name: {
@@ -28,8 +28,8 @@ const stationSchema = new mongoose.Schema({
       validate: {
         validator: function(coords) {
           return coords.length === 2 &&
-                 coords[0] >= -180 && coords[0] <= 180 && // longitude
-                 coords[1] >= -90 && coords[1] <= 90;     // latitude
+                 coords[0] >= -180 && coords[0] <= 180 &&
+                 coords[1] >= -90 && coords[1] <= 90;
         },
         message: 'Invalid coordinates. Format: [longitude, latitude]'
       }
@@ -56,7 +56,7 @@ const stationSchema = new mongoose.Schema({
   avgWaitTime: {
     type: Number,
     min: 0,
-    default: 0 // in minutes
+    default: 0
   }
 }, {
   timestamps: true
@@ -64,8 +64,6 @@ const stationSchema = new mongoose.Schema({
 
 // Create 2dsphere index for geospatial queries
 stationSchema.index({ location: '2dsphere' });
-
-// Compound indexes for common queries
 stationSchema.index({ type: 1, isActive: 1 });
 stationSchema.index({ name: 'text' });
 
@@ -97,7 +95,7 @@ stationSchema.statics.findNearCoordinates = async function(coords, maxDistance =
       $near: {
         $geometry: {
           type: 'Point',
-          coordinates: coords // [longitude, latitude]
+          coordinates: coords
         },
         $maxDistance: maxDistance
       }
@@ -116,4 +114,4 @@ stationSchema.statics.findInBounds = async function(southwest, northeast) {
   });
 };
 
-module.exports = mongoose.model('Station', stationSchema);
+export default mongoose.model('Station', stationSchema);
