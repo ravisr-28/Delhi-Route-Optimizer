@@ -35,9 +35,7 @@ app.use((req, res, next) => {
 app.use(cors({
   origin: [
     'http://localhost:5173',
-    'http://localhost:3000',
     process.env.CLIENT_URL,
-    'https://route-optimizer-teal.vercel.app'
   ].filter(Boolean),
   credentials: true,
   exposedHeaders: ['Authorization']
