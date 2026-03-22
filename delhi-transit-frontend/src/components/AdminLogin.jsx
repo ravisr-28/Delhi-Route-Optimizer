@@ -22,41 +22,56 @@ export default function AdminLogin() {
     authRef.current = isAuthenticated;
   }, [isAuthenticated]);
 
+  // Listen for OAuth token via localStorage (works across windows despite COOP)
   useEffect(() => {
-    const handleOAuthMessage = (event) => {
-      const expectedOrigins = [
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "http://localhost:5174",
-        import.meta.env.VITE_API_URL,
-        window.location.origin,
-      ]
-        .map((o) => o?.replace(/\/$/, ""))
-        .filter(Boolean);
-
-      const eventOrigin = event.origin.replace(/\/$/, "");
-      if (!expectedOrigins.includes(eventOrigin) && event.origin !== "*") {
-        console.log("Ignored message from origin:", event.origin);
-        return;
-      }
-
-      if (!event.data || !event.data.type) return;
-
-      if (event.data.type === "OAUTH_SUCCESS") {
-        console.log("OAuth Success received!");
-        loginWithToken(event.data.token);
-        setSuccess("Welcome back! Authenticating...");
+    const handleStorageChange = (e) => {
+      if (e.key === 'oauth_token' && e.newValue) {
+        console.log("OAuth token received via localStorage!");
+        const token = e.newValue;
+        // Clean up the temporary key
+        localStorage.removeItem('oauth_token');
+        if (window.__oauthTimeout) clearTimeout(window.__oauthTimeout);
+        loginWithToken(token);
+        setSuccess("Welcome back! Redirecting...");
         setLoading(false);
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 800);
       }
+      if (e.key === 'oauth_error' && e.newValue) {
+        if (window.__oauthTimeout) clearTimeout(window.__oauthTimeout);
+        setError(e.newValue);
+        setLoading(false);
+        localStorage.removeItem('oauth_error');
+      }
+    };
 
+    // Also listen for postMessage as a secondary mechanism
+    const handleOAuthMessage = (event) => {
+      if (!event.data || !event.data.type) return;
+      if (event.data.type === "OAUTH_SUCCESS" && event.data.token) {
+        console.log("OAuth Success via postMessage!");
+        if (window.__oauthTimeout) clearTimeout(window.__oauthTimeout);
+        loginWithToken(event.data.token);
+        setSuccess("Welcome back! Redirecting...");
+        setLoading(false);
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 800);
+      }
       if (event.data.type === "OAUTH_ERROR") {
+        if (window.__oauthTimeout) clearTimeout(window.__oauthTimeout);
         setError(event.data.error || "Authentication failed");
         setLoading(false);
       }
     };
 
+    window.addEventListener("storage", handleStorageChange);
     window.addEventListener("message", handleOAuthMessage);
-    return () => window.removeEventListener("message", handleOAuthMessage);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("message", handleOAuthMessage);
+    };
   }, [loginWithToken]);
 
   const handleSocialLogin = (provider) => {
@@ -82,23 +97,14 @@ export default function AdminLogin() {
       return;
     }
 
-    const checkClosed = setInterval(() => {
-      if (popup.closed) {
-        clearInterval(checkClosed);
-        setTimeout(() => {
-          if (!authRef.current) {
-            setLoading(false);
-            setError("Login cancelled or failed");
-          } else {
-            setLoading(false);
-            setSuccess("Login successful!");
-            setTimeout(() => {
-              window.location.href = "/";
-            }, 500);
-          }
-        }, 500);
+    // Timeout fallback — no popup.closed polling (COOP blocks it)
+    const oauthTimeout = setTimeout(() => {
+      if (!authRef.current) {
+        setLoading(false);
+        setError("Login timed out. Please try again.");
       }
-    }, 800);
+    }, 120000);
+    window.__oauthTimeout = oauthTimeout;
   };
 
   const handleLogin = async (e) => {

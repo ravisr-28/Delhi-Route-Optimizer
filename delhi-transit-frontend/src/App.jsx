@@ -54,39 +54,44 @@ function App() {
   const mapRef = useRef(null);
 
 
-  // Handle OAuth fallback from URL (if postMessage failed)
+  // Handle OAuth fallback from URL (if postMessage failed due to COOP)
+  // The popup redirects here with ?token=xxx&isPopup=true
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     const isPopup = params.get('isPopup');
+    const error = params.get('error');
+
+    if (error) {
+      // Write error to localStorage so parent window's storage listener picks it up
+      localStorage.setItem('oauth_error', error);
+      setTimeout(() => window.close(), 500);
+      return;
+    }
 
     if (token) {
-      console.log("Token found in URL, performing login");
-      try {
-        const result = loginWithToken(token);
+      console.log("Token found in URL");
 
-        if (result.success && (isPopup === 'true' || window.name?.includes('Login'))) {
-          console.log("Login successful in popup, attempting to close window...");
-          // Try to notify opener if possible (same-origin only)
-          try {
-            if (window.opener && !window.opener.closed) {
-              window.opener.postMessage({ type: 'OAUTH_SUCCESS', token }, window.location.origin);
-            }
-          } catch (e) {
-            console.log("Could not postMessage to opener (likely cross-origin)", e);
-          }
-          
-          // Close after a short delay for visibility
+      if (isPopup === 'true') {
+        // We're in the popup — send token to parent via localStorage
+        // The parent window's AdminLogin listens for 'storage' events on this key
+        console.log("In popup — storing token to localStorage for parent window");
+        localStorage.setItem('oauth_token', token);
+        // Clean URL and close popup
+        window.history.replaceState({}, document.title, '/');
+        setTimeout(() => {
+          window.close();
+          // If window.close() didn't work (some browsers block it), 
+          // log in directly in this window
           setTimeout(() => {
-            console.log("Closing window now");
-            window.close();
-          }, 1500);
-        } else if (result.success) {
-          // Clear URL params for main window
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }
-      } catch (err) {
-        console.error("Token login failed:", err);
+            loginWithToken(token);
+          }, 500);
+        }, 500);
+      } else {
+        // Direct navigation (not popup) — just log in
+        console.log("Direct token login");
+        loginWithToken(token);
+        window.history.replaceState({}, document.title, window.location.pathname);
       }
     }
   }, [loginWithToken]);

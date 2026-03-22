@@ -32,13 +32,19 @@ app.use((req, res, next) => {
 });
 
 // CORS configuration
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://delhi-route-optimizer.vercel.app',
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    process.env.CLIENT_URL,
-  ].filter(Boolean),
+  origin: allowedOrigins,
   credentials: true,
-  exposedHeaders: ['Authorization']
+  exposedHeaders: ['Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
 
 // Helmet - configure to allow OAuth redirects
@@ -52,15 +58,14 @@ app.use(helmet({
       imgSrc: ["'self'", "data:", "https:", "http:"],
       connectSrc: [
         "'self'",
-        "http://localhost:5173",
-        "http://localhost:3000",
-        process.env.CLIENT_URL,
+        ...allowedOrigins,
         process.env.SERVER_URL
       ].filter(Boolean),
     },
   },
   crossOriginEmbedderPolicy: false,
   crossOriginResourcePolicy: false,
+  crossOriginOpenerPolicy: false,
 }));
 
 app.use(morgan('dev'));
