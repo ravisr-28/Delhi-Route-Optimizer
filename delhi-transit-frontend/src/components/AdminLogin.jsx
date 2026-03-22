@@ -32,11 +32,8 @@ export default function AdminLogin() {
         localStorage.removeItem('oauth_token');
         if (window.__oauthTimeout) clearTimeout(window.__oauthTimeout);
         loginWithToken(token);
-        setSuccess("Welcome back! Redirecting...");
+        setSuccess("Welcome back!");
         setLoading(false);
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 800);
       }
       if (e.key === 'oauth_error' && e.newValue) {
         if (window.__oauthTimeout) clearTimeout(window.__oauthTimeout);
@@ -53,11 +50,8 @@ export default function AdminLogin() {
         console.log("OAuth Success via postMessage!");
         if (window.__oauthTimeout) clearTimeout(window.__oauthTimeout);
         loginWithToken(event.data.token);
-        setSuccess("Welcome back! Redirecting...");
+        setSuccess("Welcome back!");
         setLoading(false);
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 800);
       }
       if (event.data.type === "OAUTH_ERROR") {
         if (window.__oauthTimeout) clearTimeout(window.__oauthTimeout);

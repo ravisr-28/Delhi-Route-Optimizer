@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export default function Header({ onAdminClick, onMetroMapClick }) {
+  const { user, isAuthenticated, logout } = useAuth();
   const [open, setOpen] = useState(false);
 
   const scrollTo = (id) => {
@@ -72,14 +74,39 @@ export default function Header({ onAdminClick, onMetroMapClick }) {
               Routes
             </button>
 
-            <button
-              onClick={onAdminClick}
-              className="px-5 py-2 rounded-lg text-white text-sm
-                         bg-blue-600 hover:bg-blue-500 transition
-                         shadow-[0_0_15px_rgba(59,130,246,0.7)] cursor-pointer"
-            >
-              Login
-            </button>
+            {isAuthenticated ? (
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-gray-400 truncate max-w-[140px]" title={user?.email}>
+                  <i className="fas fa-user-circle mr-1 text-blue-400"></i>
+                  {user?.name || user?.email}
+                </span>
+                <button
+                  onClick={onAdminClick}
+                  className="px-4 py-2 rounded-lg text-white text-sm
+                             bg-blue-600 hover:bg-blue-500 transition
+                             shadow-[0_0_15px_rgba(59,130,246,0.7)] cursor-pointer"
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={logout}
+                  className="px-3 py-2 rounded-lg text-gray-400 hover:text-red-400 text-sm
+                             hover:bg-red-500/10 transition cursor-pointer"
+                  title="Sign out"
+                >
+                  <i className="fas fa-sign-out-alt"></i>
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={onAdminClick}
+                className="px-5 py-2 rounded-lg text-white text-sm
+                           bg-blue-600 hover:bg-blue-500 transition
+                           shadow-[0_0_15px_rgba(59,130,246,0.7)] cursor-pointer"
+              >
+                Login
+              </button>
+            )}
           </div>
 
           {/* MOBILE BUTTON */}
@@ -110,14 +137,39 @@ export default function Header({ onAdminClick, onMetroMapClick }) {
                 {label}
               </button>
             ))}
-            <button
-              onClick={() => { setOpen(false); onAdminClick?.(); }}
-              className="block w-full text-center px-4 py-2.5 rounded-lg text-white
-                         bg-blue-600 hover:bg-blue-500 transition
-                         shadow-[0_0_15px_rgba(59,130,246,0.7)] mt-3 text-sm font-medium"
-            >
-              Login
-            </button>
+            {isAuthenticated ? (
+              <>
+                <div className="px-3 py-2 text-xs text-gray-400 flex items-center gap-2">
+                  <i className="fas fa-user-circle text-blue-400"></i>
+                  <span className="truncate">{user?.name || user?.email}</span>
+                </div>
+                <button
+                  onClick={() => { setOpen(false); onAdminClick?.(); }}
+                  className="block w-full text-center px-4 py-2.5 rounded-lg text-white
+                             bg-blue-600 hover:bg-blue-500 transition
+                             shadow-[0_0_15px_rgba(59,130,246,0.7)] mt-1 text-sm font-medium"
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={() => { setOpen(false); logout(); }}
+                  className="block w-full text-center px-4 py-2.5 rounded-lg text-gray-400
+                             hover:text-red-400 hover:bg-red-500/10 transition
+                             mt-1 text-sm font-medium"
+                >
+                  <i className="fas fa-sign-out-alt mr-2"></i>Sign Out
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => { setOpen(false); onAdminClick?.(); }}
+                className="block w-full text-center px-4 py-2.5 rounded-lg text-white
+                           bg-blue-600 hover:bg-blue-500 transition
+                           shadow-[0_0_15px_rgba(59,130,246,0.7)] mt-3 text-sm font-medium"
+              >
+                Login
+              </button>
+            )}
           </div>
         )}
       </nav>

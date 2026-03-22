@@ -34,12 +34,17 @@ function App() {
   const [selectedMetroLine, setSelectedMetroLine] = useState(null);
   const [placeInfo, setPlaceInfo] = useState({ from: null, to: null });
   const [realTimeTick, setRealTimeTick] = useState(0);
-  const [showAdmin, setShowAdmin] = useState(false);
+  const [showAdmin, setShowAdmin] = useState(() => sessionStorage.getItem('showAdmin') === 'true');
   const [showRealTime, setShowRealTime] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showFareCalc, setShowFareCalc] = useState(false);
   const [showStaticMap, setShowStaticMap] = useState(false);
   const pendingActionRef = useRef(null);
+
+  // Persist admin view state across refreshes
+  useEffect(() => {
+    sessionStorage.setItem('showAdmin', showAdmin.toString());
+  }, [showAdmin]);
 
   // Guard: if not logged in, show login modal instead of performing the action
   const requireAuth = useCallback((action, ...args) => {
