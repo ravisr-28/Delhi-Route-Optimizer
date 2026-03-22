@@ -4,14 +4,42 @@ import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const CLIENT_URL = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
+
+// Allowed frontend origins for OAuth redirects (prevents open-redirect attacks)
+const ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://delhi-route-optimizer.vercel.app',
+    process.env.CLIENT_URL?.replace(/\/$/, ''),
+].filter(Boolean);
+
+// Validate and extract the frontend origin from the OAuth state parameter
+function extractFrontendOrigin(stateParam) {
+    try {
+        if (stateParam) {
+            const decoded = JSON.parse(Buffer.from(stateParam, 'base64').toString());
+            if (decoded.origin) {
+                const cleanOrigin = decoded.origin.replace(/\/$/, '');
+                if (ALLOWED_ORIGINS.includes(cleanOrigin)) {
+                    return cleanOrigin;
+                }
+                console.warn('OAuth state origin not in allowlist:', cleanOrigin);
+            }
+        }
+    } catch (e) {
+        console.warn('Could not parse OAuth state:', e.message);
+    }
+    return CLIENT_URL;
+}
 
 // Helper: generate JWT and send it to the frontend via postMessage
-function handleOAuthCallback(req, res) {
-    console.log("✅ OAuth callback successful for user:", req.user?.email);
+function handleOAuthCallback(req, res, frontendOrigin) {
+    const targetOrigin = frontendOrigin || CLIENT_URL;
+    console.log("✅ OAuth callback successful for user:", req.user?.email, "→ redirecting to:", targetOrigin);
 
     if (!req.user) {
-        return res.send(getCallbackHTML(null, 'Authentication failed'));
+        return res.send(getCallbackHTML(null, 'Authentication failed', null, targetOrigin));
     }
 
     // Generate JWT token
@@ -34,11 +62,12 @@ function handleOAuthCallback(req, res) {
     };
 
     // Send HTML page that will post message to parent
-    res.send(getCallbackHTML(token, null, user));
+    res.send(getCallbackHTML(token, null, user, targetOrigin));
 }
 
 // HTML page sent to the popup
-function getCallbackHTML(token, error, user) {
+function getCallbackHTML(token, error, user, targetOrigin) {
+    const clientUrl = targetOrigin || CLIENT_URL;
     return `<!DOCTYPE html>
 <html>
 <head>
@@ -93,7 +122,7 @@ function getCallbackHTML(token, error, user) {
                 const token = '${token}';
                 const user = ${JSON.stringify(user)};
                 const error = '${error || ''}';
-                const clientUrl = '${CLIENT_URL}';
+                const clientUrl = '${clientUrl}';
 
                 console.log("Checking for opener...");
                 if (!window.opener) {
@@ -154,56 +183,68 @@ function getCallbackHTML(token, error, user) {
 // Google OAuth
 router.get('/google', (req, res, next) => {
     console.log("🔵 Google OAuth route hit");
+    // Capture the frontend origin so we can redirect back to it after OAuth
+    const frontendOrigin = req.headers.origin || req.headers.referer?.replace(/\/+$/, '') || '';
+    const state = Buffer.from(JSON.stringify({ origin: frontendOrigin })).toString('base64');
+    console.log("   Frontend origin:", frontendOrigin);
     passport.authenticate('google', {
         scope: ['profile', 'email'],
-        session: false
+        session: false,
+        state
     })(req, res, next);
 });
 
 router.get('/google/callback', (req, res, next) => {
     console.log("🟢 Google callback received");
+    // Extract the frontend origin from the state parameter
+    const frontendOrigin = extractFrontendOrigin(req.query.state);
+    console.log("   Resolved frontend origin:", frontendOrigin);
     passport.authenticate('google', {
         session: false,
         failureRedirect: '/api/oauth/failure'
     }, (err, user, info) => {
         if (err) {
             console.error("Google auth error:", err);
-            return res.send(getCallbackHTML(null, err.message));
+            return res.send(getCallbackHTML(null, err.message, null, frontendOrigin));
         }
         if (!user) {
             console.error("No user returned from Google");
-            return res.send(getCallbackHTML(null, 'Authentication failed'));
+            return res.send(getCallbackHTML(null, 'Authentication failed', null, frontendOrigin));
         }
         req.user = user;
-        handleOAuthCallback(req, res);
+        handleOAuthCallback(req, res, frontendOrigin);
     })(req, res, next);
 });
 
 // GitHub OAuth
 router.get('/github', (req, res, next) => {
     console.log("⚫ GitHub OAuth route hit");
+    const frontendOrigin = req.headers.origin || req.headers.referer?.replace(/\/+$/, '') || '';
+    const state = Buffer.from(JSON.stringify({ origin: frontendOrigin })).toString('base64');
     passport.authenticate('github', {
         scope: ['user:email'],
-        session: false
+        session: false,
+        state
     })(req, res, next);
 });
 
 router.get('/github/callback', (req, res, next) => {
     console.log("⚪ GitHub callback received");
+    const frontendOrigin = extractFrontendOrigin(req.query.state);
     passport.authenticate('github', {
         session: false,
         failureRedirect: '/api/oauth/failure'
     }, (err, user, info) => {
         if (err) {
             console.error("GitHub auth error:", err);
-            return res.send(getCallbackHTML(null, err.message));
+            return res.send(getCallbackHTML(null, err.message, null, frontendOrigin));
         }
         if (!user) {
             console.error("No user returned from GitHub");
-            return res.send(getCallbackHTML(null, 'Authentication failed'));
+            return res.send(getCallbackHTML(null, 'Authentication failed', null, frontendOrigin));
         }
         req.user = user;
-        handleOAuthCallback(req, res);
+        handleOAuthCallback(req, res, frontendOrigin);
     })(req, res, next);
 });
 
